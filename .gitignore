@@ -1,5 +1,8 @@
 secrets.yaml
 
+# IDE
+.gemini/
+
 # HAOS & Add-on Runtime Files
 .HA_VERSION
 .cache/
