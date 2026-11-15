@@ -1,1 +1,33 @@
 secrets.yaml
+
+# HAOS & Add-on Runtime Files
+.HA_VERSION
+.cache/
+.cloud/
+.ha_run.lock
+.storage/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.log*
+*.bkp
+core
+blueprints/
+custom_components/
+image/
+themes/
+tts/
+ui_lovelace_minimalist/
+watchman_report.txt
+wmbusmeters/
+www/
+zigbee2mqtt/
+
+# Track ESPHome YAML configs, ignore build cache & secrets
+esphome/.esphome/
+esphome/secrets.yaml
+esphome/.device-builder*
+esphome/.gitignore
+esphome/archive/
+esphome/*.ttf
