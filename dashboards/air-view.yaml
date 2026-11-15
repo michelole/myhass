@@ -1,0 +1,632 @@
+views:
+  - title: CO2
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: carbon_dioxide
+                  options:
+                    type: gauge
+                    max: 3000
+                    severity:
+                      green: 0
+                      yellow: 1000
+                      red: 2000
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: carbon_dioxide
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: carbon_dioxide
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 3000
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: carbon_dioxide
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 3000
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: carbon_dioxide
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 3000
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: carbon_dioxide
+        column_span: 1
+    max_columns: 3
+  - title: Polen
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 3
+                    severity:
+                      green: 0
+                      yellow: 1
+                      red: 2
+                  domain: sensor
+                  name: Pollen*
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              min_y_axis: 0
+              max_y_axis: 3
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Pollen*
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 3
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Pollen*
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 3
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Pollen*
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 3
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Pollen*
+        column_span: 1
+    max_columns: 4
+  - title: PM 2.5
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: pm25
+                  options:
+                    type: gauge
+                    max: 200
+                    severity:
+                      green: 0
+                      yellow: 50
+                      red: 100
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: pm25
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: pm25
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Daily
+              days_to_show: 30
+              logarithmic_scale: false
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: pm25
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              min_y_axis: 0
+              max_y_axis: 100
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: pm25
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: pm25
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+        column_span: 1
+    max_columns: 4
+  - title: VOC
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - entity_id: '*voc_index'
+                  options:
+                    type: gauge
+                    max: 600
+                    severity:
+                      green: 0
+                      yellow: 200
+                      red: 300
+                - domain: sensor
+                  attributes:
+                    device_class: volatile_organic_compounds_parts
+                  options:
+                    type: gauge
+                    max: 2000
+                    severity:
+                      green: 0
+                      yellow: 500
+                      red: 1000
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  entity_id: '*voc_index'
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: volatile_organic_compounds_parts
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+                - max
+                - min
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  entity_id: '*voc_index'
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: volatile_organic_compounds_parts
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+                - max
+                - min
+              min_y_axis: 0
+              max_y_axis: 1000
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  entity_id: '*voc_index'
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: volatile_organic_compounds_parts
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 1000
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - entity_id: '*voc_index'
+                - domain: sensor
+                  attributes:
+                    device_class: volatile_organic_compounds_parts
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 1000
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - entity_id: '*voc_index'
+                - domain: sensor
+                  attributes:
+                    device_class: volatile_organic_compounds_parts
+        column_span: 1
+    max_columns: 4
+  - title: AQI
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: aqi
+                  options:
+                    type: gauge
+                    max: 200
+                    severity:
+                      green: 0
+                      yellow: 50
+                      red: 100
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: aqi
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              min_y_axis: 0
+              title: Daily
+              days_to_show: 30
+              max_y_axis: 200
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: aqi
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              min_y_axis: 0
+              days_to_show: 365
+              title: Weekly
+              max_y_axis: 200
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: aqi
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              min_y_axis: 0
+              title: Monthly
+              days_to_show: 730
+              max_y_axis: 200
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: aqi
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+        column_span: 2
+    max_columns: 4

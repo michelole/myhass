@@ -1,0 +1,315 @@
+esphome:
+  name: "panel"
+
+esp8266:
+  # restore_from_flash: true
+  board: nodemcuv2
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: !secret wifi_domain
+  #enable_mdns: false
+  
+switch:
+  - platform: safe_mode
+    name: "Panel Safe Mode"
+
+light:
+  - platform: neopixelbus
+    variant: WS2812
+    pin: GPIO3
+    num_leds: 64
+    name: "NeoPixel Panel"
+    id: neopixel_panel
+  - platform: partition
+    name: "Panel LED 0_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 63
+        to: 63
+  - platform: partition
+    name: "Panel LED 0_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 62
+        to: 62
+  - platform: partition
+    name: "Panel LED 0_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 61
+        to: 61
+  - platform: partition
+    name: "Panel LED 0_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 57
+        to: 57
+  - platform: partition
+    name: "Panel LED 1_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 55
+        to: 55
+  - platform: partition
+    name: "Panel LED 1_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 54
+        to: 54
+  - platform: partition
+    name: "Panel LED 1_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 53
+        to: 53
+  - platform: partition
+    name: "Panel LED 1_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 49
+        to: 49
+  - platform: partition
+    name: "Panel LED 2_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 47
+        to: 47
+  - platform: partition
+    name: "Panel LED 2_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 46
+        to: 46
+  - platform: partition
+    name: "Panel LED 2_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 45
+        to: 45
+  - platform: partition
+    name: "Panel LED 2_4"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 43
+        to: 43
+  - platform: partition
+    name: "Panel LED 2_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 41
+        to: 41
+  - platform: partition
+    name: "Panel LED 3_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 39
+        to: 39
+  - platform: partition
+    name: "Panel LED 3_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 38
+        to: 38
+  - platform: partition
+    name: "Panel LED 3_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 37
+        to: 37
+  - platform: partition
+    name: "Panel LED 3_4"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 35
+        to: 35
+  - platform: partition
+    name: "Panel LED 3_5"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 34
+        to: 34
+  - platform: partition
+    name: "Panel LED 3_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 33
+        to: 33
+  - platform: partition
+    name: "Panel LED 4_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 31
+        to: 31
+  - platform: partition
+    name: "Panel LED 4_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 30
+        to: 30
+  - platform: partition
+    name: "Panel LED 4_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 29
+        to: 29
+  - platform: partition
+    name: "Panel LED 4_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 25
+        to: 25
+  - platform: partition
+    name: "Panel LED 5_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 23
+        to: 23
+  - platform: partition
+    name: "Panel LED 5_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 22
+        to: 22
+  - platform: partition
+    name: "Panel LED 5_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 21
+        to: 21
+  - platform: partition
+    name: "Panel LED 5_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 17
+        to: 17
+  - platform: partition
+    name: "Panel LED 6_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 15
+        to: 15
+  - platform: partition
+    name: "Panel LED 6_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 14
+        to: 14
+  - platform: partition
+    name: "Panel LED 6_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 13
+        to: 13
+  - platform: partition
+    name: "Panel LED 6_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 9
+        to: 9
+  - platform: partition
+    name: "Panel LED 7_0"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 7
+        to: 7
+  - platform: partition
+    name: "Panel LED 7_1"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 6
+        to: 6
+  - platform: partition
+    name: "Panel LED 7_2"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 5
+        to: 5
+  - platform: partition
+    name: "Panel LED 7_6"
+    effects:
+      - pulse:
+    segments:
+      - id: neopixel_panel
+        from: 1
+        to: 1

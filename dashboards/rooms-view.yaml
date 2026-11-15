@@ -1,0 +1,114 @@
+views:
+  - title: Bathroom
+    path: bathroom
+    badges: []
+    cards:
+      - type: history-graph
+        entities:
+          - entity: binary_sensor.bathroom_window_contact
+          - entity: sensor.bathroom_tvoc_humidity
+          - entity: sensor.outdoor_humidity
+          - entity: sensor.bathroom_tvoc_temperature
+          - entity: sensor.bathroom_tvoc_voc
+        hours_to_show: 4
+  - type: sections
+    max_columns: 4
+    title: Kitchen
+    path: kitchen
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+          - type: custom:apexcharts-card
+            graph_span: 8h
+            apex_config:
+              chart:
+                height: 400px
+                animations:
+                  enabled: false
+              grid:
+                borderColor: '#707070'
+                xaxis:
+                  lines:
+                    show: true
+              legend:
+                position: top
+            all_series_config:
+              stroke_width: 2
+              show:
+                legend_value: true
+            header:
+              show: false
+              show_states: true
+              colorize_states: true
+            yaxis:
+              - min: 30
+                max: 100
+                decimals: 0
+                apex_config:
+                  tickAmount: 7
+            series:
+              - entity: sensor.kitchen_vindstyrka_humidity
+                name: Vindstyrka Humidity
+                statistics:
+                  period: 5minute
+              - entity: sensor.kitchen_humidity
+                name: Tado Humidity
+              - entity: sensor.kitchen_vindstyrka_pm25
+                name: PM2.5
+                transform: return x / 10 + 30;
+                statistics:
+                  period: 5minute
+              - entity: sensor.kitchen_vindstyrka_voc_index
+                name: VOC
+                transform: return x / 10 + 30;
+                statistics:
+                  period: 5minute
+              - entity: sensor.outdoor_humidity
+                name: Outdoor
+              - entity: binary_sensor.kitchen_window_contact
+                name: Window
+                curve: stepline
+                transform: return (x == "on" ? 10 :0) + 30;
+    cards: []
+  - title: All
+    path: all
+    badges: []
+    cards:
+      - type: custom:apexcharts-card
+        header:
+          show: true
+          title: Temp x Heating
+        graph_span: 365d
+        span:
+          end: week
+          offset: -1week
+        all_series_config:
+          stroke_width: 2
+          type: line
+        yaxis:
+          - max: 25
+            min: -5
+        series:
+          - entity: sensor.living_room_heater_consumption
+            transform: return x / 10;
+            statistics:
+              type: change
+              period: week
+          - entity: sensor.openweathermap_temperature
+            statistics:
+              type: mean
+              period: week
+            transform: return x;
+          - entity: sensor.total_heater_consumption
+            color: black
+            transform: return x / 10;
+            statistics:
+              type: change
+              period: week
+          - entity: sensor.living_room_trv_position
+            statistics:
+              type: mean
+              period: week
+            transform: return x;

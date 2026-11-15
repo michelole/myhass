@@ -1,0 +1,530 @@
+turn_off_heating:
+  sequence:
+  - device_id: 66737840b4f16e882a8c825e0e41d8da
+    domain: climate
+    entity_id: climate.bedroom
+    type: set_preset_mode
+    preset_mode: away
+  - device_id: c85a0d1c40935b1e51c7e6e9d2b81864
+    domain: climate
+    entity_id: climate.kitchen
+    type: set_preset_mode
+    preset_mode: away
+  - device_id: 1a8e96ddcf72b41f7c940faa41b6eb3e
+    domain: climate
+    entity_id: climate.living_room
+    type: set_preset_mode
+    preset_mode: away
+  - device_id: ed59fb56277b769c759b9498e458ca78
+    domain: climate
+    entity_id: climate.loggia
+    type: set_preset_mode
+    preset_mode: away
+  - device_id: f9d356806f8436ed625d6d7135c19f57
+    domain: climate
+    entity_id: d714480bd8af848d86d23280109437c1
+    type: set_preset_mode
+    preset_mode: away
+  mode: single
+  alias: Set (home) heating to Away
+  icon: mdi:radiator-off
+turn_on_heating:
+  alias: Set heating to Home
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.bathroom_window_contact
+        state: 'off'
+      sequence:
+      - device_id: f9d356806f8436ed625d6d7135c19f57
+        domain: climate
+        entity_id: climate.towel
+        type: set_preset_mode
+        preset_mode: home
+    enabled: false
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.bedroom_window_contact
+        state: 'off'
+      sequence:
+      - device_id: 66737840b4f16e882a8c825e0e41d8da
+        domain: climate
+        entity_id: climate.bedroom
+        type: set_preset_mode
+        preset_mode: home
+    enabled: false
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.kitchen_window_contact
+        state: 'off'
+      sequence:
+      - device_id: c85a0d1c40935b1e51c7e6e9d2b81864
+        domain: climate
+        entity_id: climate.kitchen
+        type: set_preset_mode
+        preset_mode: home
+    enabled: false
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.living_room_windows
+        state: 'off'
+      sequence:
+      - device_id: 1a8e96ddcf72b41f7c940faa41b6eb3e
+        domain: climate
+        entity_id: climate.living_room
+        type: set_preset_mode
+        preset_mode: home
+    enabled: false
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.loggia_window_contact
+        state: 'off'
+      sequence:
+      - device_id: ed59fb56277b769c759b9498e458ca78
+        domain: climate
+        entity_id: climate.loggia
+        type: set_preset_mode
+        preset_mode: home
+    enabled: false
+  - device_id: f9d356806f8436ed625d6d7135c19f57
+    domain: climate
+    entity_id: d714480bd8af848d86d23280109437c1
+    type: set_preset_mode
+    preset_mode: home
+  - device_id: 66737840b4f16e882a8c825e0e41d8da
+    domain: climate
+    entity_id: 7f81d4f25f63053d0e5c96ee7471b126
+    type: set_preset_mode
+    preset_mode: home
+  - device_id: c85a0d1c40935b1e51c7e6e9d2b81864
+    domain: climate
+    entity_id: aca38aaa03321919577fcfe0e5836313
+    type: set_preset_mode
+    preset_mode: home
+  - device_id: ed59fb56277b769c759b9498e458ca78
+    domain: climate
+    entity_id: da00e0cd4746cd8de84963b18406ac33
+    type: set_preset_mode
+    preset_mode: home
+  - device_id: 1a8e96ddcf72b41f7c940faa41b6eb3e
+    domain: climate
+    entity_id: cde5991eb973d9a8c3b321edb3f87460
+    type: set_preset_mode
+    preset_mode: home
+  mode: single
+  icon: mdi:radiator
+turn_off_light_sources:
+  alias: Turn off indicator lights
+  sequence:
+  - data:
+      value: 0
+    target:
+      entity_id: input_number.brightness
+    action: input_number.set_value
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.indicator_lights
+  - data:
+      value: ' '
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  mode: single
+  description: ''
+'1662823079659':
+  alias: Confirmable Notification
+  use_blueprint:
+    path: homeassistant/confirmable_notification.yaml
+    input:
+      notify_device: 767a88b4bbfa96f0ae264f19506b392a
+      title: Title
+      message: Body
+'1662825053499':
+  alias: Mobile Notification
+  sequence:
+  - action: notify.send_message
+    metadata: {}
+    target:
+      entity_id: notify.pixel_10
+    data:
+      message: '{{body}}'
+      title: '{{title}}'
+  mode: single
+  fields:
+    body:
+      selector:
+        text:
+      name: 'Body '
+      required: true
+    title:
+      selector:
+        text:
+      name: Title
+clean_room:
+  alias: Clean Room
+  sequence:
+  - service: vacuum.send_command
+    target:
+      entity_id: vacuum.roborock_s5_max
+    data:
+      command: app_segment_clean
+      params:
+      - segments:
+        - '{% set dict = { ''Bathroom'':22, ''Bedroom'':21, ''Corridor'':24, ''Kitchen'':
+          25, ''Living Room'':18, ''Loggia'':20 } %} {% set my_room = room %} {{dict[my_room]}}
+
+          '
+        repeat: '{{repeat}}'
+  mode: single
+  fields:
+    repeat:
+      selector:
+        number:
+          min: 1
+          max: 3
+          step: 1
+      default: 1
+      name: repeat
+    room:
+      selector:
+        select:
+          options:
+          - Bathroom
+          - Bedroom
+          - Corridor
+          - Kitchen
+          - Living Room
+          - Loggia
+      required: true
+clean_room_if_day:
+  alias: Clean Room If Day
+  sequence:
+  - if:
+    - condition: time
+      after: input_datetime.wake_time
+      before: input_datetime.evening_time
+    then:
+    - service: script.clean_room
+      metadata: {}
+      data:
+        repeat: '{{repeat}}'
+        room: '{{room}}'
+  mode: single
+  fields:
+    repeat:
+      selector:
+        number:
+          min: 1
+          max: 3
+          step: 1
+      default: 1
+      name: repeat
+    room:
+      selector:
+        select:
+          options:
+          - Bathroom
+          - Bedroom
+          - Corridor
+          - Kitchen
+          - Living Room
+          - Loggia
+      required: true
+cube_brightness:
+  alias: Cube Brightness
+  use_blueprint:
+    path: SirGoodenough/dimmer_control_4_magic_cube.yaml
+  description: ''
+  icon: mdi:brightness-7
+awake_2:
+  sequence:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.evening_time
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - condition: state
+    state:
+    - 'on'
+    entity_id: light.bedroom_corner_light
+  - action: script.air_purifier
+    metadata: {}
+    data:
+      mode: 'off'
+    continue_on_error: true
+    enabled: false
+  - action: fan.turn_off
+    metadata: {}
+    target:
+      entity_id: fan.air_purifier
+    data: {}
+    continue_on_error: true
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  - action: automation.trigger
+    metadata: {}
+    target:
+      entity_id: automation.bedroom_co2
+    data:
+      skip_condition: true
+  - action: input_number.set_value
+    metadata: {}
+    data:
+      value: 100
+    target:
+      entity_id: input_number.brightness
+    enabled: false
+  alias: Bedroom Awake
+  description: ''
+  mode: single
+asleep:
+  sequence:
+  - action: script.turn_off_light_sources
+    metadata: {}
+    data: {}
+  - action: script.close_blinds_safely
+    metadata: {}
+    data: {}
+    enabled: false
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.bedroom_corner_light
+  - action: script.air_purifier_if_window_closed
+    metadata: {}
+    data:
+      mode: turbo
+    enabled: false
+  - delay:
+      hours: 0
+      minutes: 15
+      seconds: 0
+      milliseconds: 0
+    enabled: false
+  - action: script.air_purifier_if_window_closed
+    metadata: {}
+    data:
+      mode: medium
+    enabled: false
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  - action: script.close_blinds_safely
+    metadata: {}
+    data: {}
+    enabled: false
+  - condition: state
+    entity_id: binary_sensor.bedroom_window_contact
+    state: 'off'
+  - action: fan.turn_on
+    metadata: {}
+    target:
+      entity_id: fan.air_purifier
+    data: {}
+    enabled: false
+  - action: fan.set_preset_mode
+    metadata: {}
+    target:
+      entity_id: fan.air_purifier
+    data:
+      preset_mode: Sleep
+    enabled: false
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.bedroom_bedroom_air_sensor
+    data: {}
+  alias: Asleep
+  description: ''
+  mode: single
+close_blinds_safely:
+  sequence:
+  - condition: state
+    entity_id: binary_sensor.bedroom_window_contact
+    state: 'off'
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  - action: cover.set_cover_position
+    metadata: {}
+    data:
+      position: 30
+    target:
+      entity_id: cover.living_room_blind
+  alias: Close Blinds Safely
+  description: ''
+air_purifier:
+  sequence:
+  - action: google_assistant_sdk.send_text_command
+    metadata: {}
+    data:
+      command: Turn on the air purifier
+    enabled: true
+  - action: google_assistant_sdk.send_text_command
+    metadata: {}
+    data:
+      command: Set the air purifier to {{ mode }} mode
+    enabled: true
+  - action: fan.turn_on
+    metadata: {}
+    target:
+      entity_id: fan.air_purifier
+    data: {}
+    enabled: false
+  - action: fan.set_preset_mode
+    metadata: {}
+    target:
+      entity_id: fan.air_purifier
+    data: {}
+    enabled: false
+  alias: Air Purifier
+  description: ''
+  fields:
+    mode:
+      selector:
+        select:
+          options:
+          - turbo
+          - medium
+          - sleep
+          - 'off'
+      name: Mode
+      required: true
+      default: sleep
+air_purifier_if_window_closed:
+  sequence:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  - condition: state
+    entity_id: binary_sensor.bedroom_window_contact
+    state: 'off'
+  - action: script.air_purifier
+    metadata: {}
+    data:
+      mode: '{{mode}}'
+  fields:
+    mode:
+      selector:
+        select:
+          options:
+          - turbo
+          - medium
+          - sleep
+          - 'off'
+      name: Mode
+      required: true
+  alias: Air Purifier if window closed
+  description: ''
+set_light_brightness:
+  sequence:
+  - repeat:
+      sequence:
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ is_state(repeat.item, ''on'') }}'
+          sequence:
+          - data:
+              brightness_pct: '{{brightness}}'
+              transition: 60
+            target:
+              entity_id: '{{repeat.item}}'
+            action: light.turn_on
+          alias: Light is on
+        - conditions:
+          - condition: template
+            value_template: '{{ is_state(repeat.item, ''off'') }}'
+          sequence:
+          - data:
+              brightness_pct: '{{brightness}}'
+            target:
+              entity_id: '{{repeat.item}}'
+            action: light.turn_on
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 1
+              milliseconds: 0
+          - data: {}
+            action: light.turn_off
+            target:
+              entity_id: '{{repeat.item}}'
+          alias: Light is off
+      for_each: '{{entities}}'
+  alias: Set Light Brightness
+  mode: queued
+  fields:
+    brightness:
+      selector:
+        number:
+          min: 0
+          max: 100
+      name: Brightness (in %)
+      required: true
+    entities:
+      selector:
+        entity:
+          multiple: true
+      required: true
+      name: Entity
+  description: ''
+  max: 10
+dim_lights:
+  sequence:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 50
+    target:
+      entity_id: light.secondary_lights
+    enabled: false
+  alias: Dim Lights
+  description: ''
+  mode: queued
+  max: 10
+movie:
+  sequence:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 50
+    target:
+      entity_id:
+      - light.living_room_ceiling_light
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_table_light
+      - light.corridor_ceiling_light
+  alias: Movie
+  description: ''
+music_off:
+  sequence:
+  - action: media_player.media_stop
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.bathroom_speaker
+      - media_player.nestmini5585
+      - media_player.living_room_speaker
+      - media_player.nesthub85f7
+      - media_player.nestmini6525
+  alias: Music off
+  description: ''

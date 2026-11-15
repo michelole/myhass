@@ -1,0 +1,83 @@
+views:
+  - title: Battery
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 100
+                    segments:
+                      - from: 0
+                        color: var(--error-color)
+                      - from: 20
+                        color: var(--warning-color)
+                      - from: 55
+                        color: var(--success-color)
+                  domain: sensor
+                  entity_id: '*plus*'
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+                - state: unknown
+                - state: '> 70'
+            sort:
+              method: state
+              numeric: true
+              reverse: false
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 30
+              title: Daily
+            filter:
+              include:
+                - options: {}
+                  entity_id: '*battery_plus*'
+              exclude:
+                - options: {}
+                  state: '> 60'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  entity_id: '*battery_plus*'
+              exclude:
+                - options: {}
+                  state: '> 70'
+  - type: sections
+    max_columns: 4
+    title: Ink
+    path: ink
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section

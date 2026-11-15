@@ -1,0 +1,94 @@
+views:
+  - theme: Backend-selected
+    title: Home
+    badges: []
+    cards:
+      - type: picture-elements
+        elements:
+          - type: state-label
+            entity: sensor.bedroom_temperature
+            style:
+              top: 40%
+              left: 80%
+          - type: state-label
+            entity: sensor.bedroom_humidity
+            style:
+              top: 45%
+              left: 80%
+          - type: state-label
+            entity: sensor.living_room_temperature
+            style:
+              top: 30%
+              left: 45%
+          - type: state-label
+            entity: sensor.living_room_humidity
+            style:
+              top: 35%
+              left: 45%
+          - type: state-label
+            entity: sensor.loggia_temperature
+            style:
+              top: 20%
+              left: 10%
+          - type: state-label
+            entity: sensor.loggia_humidity
+            style:
+              top: 25%
+              left: 10%
+          - type: state-label
+            entity: sensor.kitchen_temperature
+            style:
+              top: 65%
+              left: 37%
+          - type: state-label
+            entity: sensor.kitchen_humidity
+            style:
+              top: 70%
+              left: 37%
+          - type: state-label
+            entity: sensor.bathroom_tvoc_temperature
+            style:
+              top: 80%
+              left: 10%
+          - type: state-label
+            entity: sensor.bathroom_tvoc_humidity
+            style:
+              top: 85%
+              left: 10%
+          - type: state-label
+            entity: sensor.openweathermap_temperature
+            style:
+              top: 80%
+              left: 90%
+          - type: state-label
+            entity: sensor.openweathermap_humidity
+            style:
+              top: 85%
+              left: 90%
+          - type: state-icon
+            entity: binary_sensor.bathroom_window_contact
+            style:
+              top: 82%
+              left: 22%
+          - type: state-icon
+            entity: binary_sensor.kitchen_window_contact
+            style:
+              top: 63%
+              left: 22%
+          - type: state-icon
+            entity: binary_sensor.bedroom_window_contact
+            style:
+              top: 8%
+              left: 83%
+          - type: state-icon
+            entity: binary_sensor.living_room_right_window_contact
+            style:
+              top: 8%
+              left: 51%
+          - type: state-icon
+            entity: binary_sensor.loggia_window_contact
+            style:
+              top: 53%
+              left: 12%
+        image: /local/grundriss.png
+title: Blueprint

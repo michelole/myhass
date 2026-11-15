@@ -1,0 +1,48 @@
+esphome:
+  name: "matrix"
+  compile_process_limit: 1
+
+
+esp8266:
+  board: nodemcuv2
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: !secret wifi_domain
+  #enable_mdns: false
+  
+# Example configuration entry
+spi:
+  clk_pin: D6
+  mosi_pin: D8  # DIN
+
+display:
+  - platform: max7219digit
+    cs_pin: D7
+    num_chips: 4
+    intensity: 5
+    lambda: |-
+      it.printf(0, 0, id(digit_font), " %s ", id(matrix_text).state.c_str());
+      
+font:
+  - file: "pixelmix.ttf"
+    id: digit_font
+    size: 8
+    
+text_sensor:
+  - platform: homeassistant
+    name: "Matrix Text"
+    id: matrix_text
+    entity_id: input_text.matrix_text

@@ -1,0 +1,108 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+homeassistant:
+  customize: !include customize.yaml
+
+sensor: !include sensors.yaml
+
+template: !include templates.yaml
+    
+mqtt: !include mqtt.yaml        
+
+plant: !include plants.yaml
+
+system_log:
+  fire_event: true
+  
+lovelace:
+  mode: storage
+  dashboards:
+    air-view:
+      mode: yaml
+      title: Air Quality
+      icon: mdi:air-filter
+      show_in_sidebar: true
+      filename: dashboards/air-view.yaml
+    battery-view:
+      mode: yaml
+      title: Battery / Ink
+      icon: mdi:battery
+      show_in_sidebar: true
+      filename: dashboards/battery-view.yaml
+    blueprint-view:
+      mode: yaml
+      title: Blueprint
+      icon: mdi:home
+      show_in_sidebar: true
+      filename: dashboards/blueprint-view.yaml
+    consumption-view:
+      mode: yaml
+      title: Consumption
+      icon: mdi:currency-usd
+      show_in_sidebar: true
+      filename: dashboards/consumption-view.yaml
+    heating-view:
+      mode: yaml
+      title: Heating
+      icon: mdi:radiator
+      show_in_sidebar: true
+      filename: dashboards/heating-view.yaml
+    internet-view:
+      mode: yaml
+      title: Internet
+      icon: mdi:web
+      show_in_sidebar: true
+      filename: dashboards/internet-view.yaml
+    plants-view:
+      mode: yaml
+      title: Plants
+      icon: mdi:pine-tree
+      show_in_sidebar: true
+      filename: dashboards/plants-view.yaml
+    rooms-view:
+      mode: yaml
+      title: Rooms / Correlations
+      icon: mdi:folder-home
+      show_in_sidebar: true
+      filename: dashboards/rooms-view.yaml
+    system-view:
+      mode: yaml
+      title: System
+      icon: mdi:lifebuoy
+      show_in_sidebar: true
+      filename: dashboards/system-view.yaml
+    weather-view:
+      mode: yaml
+      title: Weather
+      icon: mdi:cloud-outline
+      show_in_sidebar: true
+      filename: dashboards/weather-view.yaml
+    wellbeing-view:
+      mode: yaml
+      title: Wellbeing
+      icon: mdi:thermometer
+      show_in_sidebar: true
+      filename: dashboards/wellbeing-view.yaml
+    windows-view:
+      mode: yaml
+      title: Windows
+      icon: mdi:window-closed-variant
+      show_in_sidebar: true
+      filename: dashboards/windows-view.yaml
+
+
+      

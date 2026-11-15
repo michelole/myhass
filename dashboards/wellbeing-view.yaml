@@ -1,0 +1,576 @@
+views:
+  - title: Temperature
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  label: allowlist
+                  options:
+                    type: gauge
+                    needle: true
+                    min: 10
+                    max: 40
+                    segments:
+                      - from: 0
+                        color: var(--info-color)
+                      - from: 20
+                        color: var(--success-color)
+                      - from: 25
+                        color: var(--warning-color)
+                      - from: 30
+                        color: var(--error-color)
+                  attributes:
+                    device_class: temperature
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*Heater*'
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Minutely
+              days_to_show: 0.05
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: temperature
+                - options: {}
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*Heater*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: temperature
+                - options: {}
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*Heater*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: temperature
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*Heater*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: temperature
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*Heater*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: temperature
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*Heater*'
+        column_span: 1
+    max_columns: 4
+  - title: Humidity
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    needle: true
+                    max: 100
+                    min: 0
+                    segments:
+                      - from: 0
+                        color: var(--error-color)
+                      - from: 20
+                        color: var(--warning-color)
+                      - from: 40
+                        color: var(--success-color)
+                      - from: 60
+                        color: var(--warning-color)
+                      - from: 80
+                        color: var(--error-color)
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: humidity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  label: no-auto
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Minutely
+              days_to_show: 0.05
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: humidity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  label: no-auto
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: humidity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  label: no-auto
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: humidity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  label: no-auto
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  label: allowlist
+                  domain: sensor
+                  attributes:
+                    device_class: humidity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  label: no-auto
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  attributes:
+                    device_class: humidity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  label: no-auto
+        column_span: 1
+    max_columns: 4
+  - title: Noise
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: sound_pressure
+                  options:
+                    type: gauge
+                    max: 100
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 80
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              days_to_show: 1
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Hourly
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: sound_pressure
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: sound_pressure
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              min_y_axis: 0
+              max_y_axis: 100
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: sound_pressure
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              min_y_axis: 0
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: sound_pressure
+        column_span: 1
+    max_columns: 4
+  - title: Illuminance
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: illuminance
+                  options:
+                    type: gauge
+                    max: 60000
+                    segments:
+                      - from: 0
+                        color: red
+                      - from: 15000
+                        color: yellow
+                      - from: 30000
+                        color: green
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: false
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              min_y_axis: 0
+              title: Hourly
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              title: Daily
+              days_to_show: 30
+              max_y_axis: 8000
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              days_to_show: 365
+              title: Weekly
+              max_y_axis: 8000
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              title: Monthly
+              days_to_show: 730
+              max_y_axis: 8000
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+        column_span: 1
+    max_columns: 4

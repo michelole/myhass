@@ -1,0 +1,610 @@
+views:
+  - title: Ping
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*Ping*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Ping*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Ping*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Ping*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Ping*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Ping*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+        column_span: 1
+    max_columns: 4
+  - title: Speed
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: data_rate
+                  options:
+                    type: gauge
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - name: '*Max*'
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: data_rate
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: data_rate
+                  options:
+                    type: gauge
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: data_rate
+                  options:
+                    type: gauge
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: data_rate
+                  options:
+                    type: gauge
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: data_rate
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+        column_span: 1
+    max_columns: 4
+  - title: SNR (higher is better)
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*noise margin*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*noise margin*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*noise margin*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*noise margin*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*noise margin*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 50
+                  domain: sensor
+                  name: '*noise margin*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+        column_span: 1
+    max_columns: 4
+  - title: Attenuation (lower is better)
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                  domain: sensor
+                  name: '*attenuation*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options:
+                    type: gauge
+                  domain: sensor
+                  name: '*attenuation*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options:
+                    type: gauge
+                  domain: sensor
+                  name: '*attenuation*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+                - min
+                - max
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options:
+                    type: gauge
+                  domain: sensor
+                  name: '*attenuation*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options:
+                    type: gauge
+                  domain: sensor
+                  name: '*attenuation*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - min
+                - mean
+                - max
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options:
+                    type: gauge
+                  domain: sensor
+                  name: '*attenuation*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+        column_span: 1
+    max_columns: 4

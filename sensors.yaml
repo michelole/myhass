@@ -1,0 +1,55 @@
+#   - platform: mold_indicator
+#     name: Bathroom Mold Indicator
+#     indoor_temp_sensor: sensor.tvoc_temperature
+#     indoor_humidity_sensor: sensor.tvoc_humidity
+#     outdoor_temp_sensor: sensor.netatmo_outdoor_temperature
+#     calibration_factor: 1.36
+
+#   - platform: mold_indicator
+#     name: Bedroom Mold Indicator
+#     indoor_temp_sensor: sensor.bedroom_temperature
+#     indoor_humidity_sensor: sensor.bedroom_humidity
+#     outdoor_temp_sensor: sensor.netatmo_outdoor_temperature
+#     calibration_factor: 1.4
+    
+#   - platform: mold_indicator
+#     name: Kitchen Mold Indicator
+#     indoor_temp_sensor: sensor.kitchen_temperature
+#     indoor_humidity_sensor: sensor.kitchen_humidity
+#     outdoor_temp_sensor: sensor.netatmo_outdoor_temperature
+#     calibration_factor: 1.43
+    
+#   - platform: mold_indicator
+#     name: Living Room Mold Indicator
+#     indoor_temp_sensor: sensor.living_room_temperature
+#     indoor_humidity_sensor: sensor.living_room_humidity
+#     outdoor_temp_sensor: sensor.netatmo_outdoor_temperature
+#     calibration_factor: 1.4
+    
+#   - platform: mold_indicator
+#     name: Loggia Mold Indicator
+#     indoor_temp_sensor: sensor.loggia_temperature
+#     indoor_humidity_sensor: sensor.loggia_humidity
+#     outdoor_temp_sensor: sensor.netatmo_outdoor_temperature
+#     calibration_factor: 1.4
+
+  - platform: history_stats
+    name: Bathroom Window OPEN today
+    entity_id: binary_sensor.bathroom_window_contact
+    state: "on"
+    type: time
+    start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+    end: "{{ now() }}"
+  
+#   - platform: fitbit
+#     clock_format: 12H
+#     monitored_resources:
+#       - "sleep/efficiency"
+#       - "sleep/minutesAsleep"
+#       - "sleep/minutesAwake"
+#       - "sleep/timeInBed"
+#       - "activities/steps"
+#       - "activities/calories"
+#       - "activities/heart"
+#       - "body/weight"
+#       - "devices/battery"

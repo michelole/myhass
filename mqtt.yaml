@@ -1,0 +1,111 @@
+  sensor:
+    - name: "Bathroom Heater Consumption"
+      state_topic: "wmbusmeters/BathroomHeater"
+      state_class: total_increasing
+      value_template: "{{ value_json.current_hca }}"
+      unique_id: 0b799016-e836-4b7b-b6d0-cda88c8c8a3d
+    - name: "Bedroom Heater Consumption"
+      state_topic: "wmbusmeters/BedroomHeater"
+      state_class: total_increasing
+      value_template: "{{ value_json.current_hca }}"
+      unique_id: 7830be69-8e19-4d0b-9ebd-f14625ed1b3a
+    - name: "Kitchen Heater Consumption"
+      state_topic: "wmbusmeters/KitchenHeater"
+      state_class: total_increasing
+      value_template: "{{ value_json.current_hca }}"
+      unique_id: 85b4fa0d-96da-483a-8dbf-6c93cc68369c
+    - name: "Living Room Heater Consumption"
+      state_topic: "wmbusmeters/LivingRoomHeater"
+      state_class: total_increasing
+      value_template: "{{ value_json.current_hca }}"
+      unique_id: ec9ef7f1-81f2-46f4-89bf-4f90e139add3
+    - name: "Loggia Heater Consumption"
+      state_topic: "wmbusmeters/LoggiaHeater"
+      state_class: total_increasing
+      value_template: "{{ value_json.current_hca }}"
+      unique_id: 981b5053-f50a-4072-b604-2cfe5588c0c9
+    - name: "Warm Water Consumption"
+      state_topic: "wmbusmeters/WarmWaterMeter"
+      unit_of_measurement: "m³"
+      device_class: water
+      state_class: total
+      value_template: "{{ value_json.total_m3 }}"
+      unique_id: 26740220-b2ef-4b68-8cb1-04d726183292
+    - name: "Cold Water Consumption"
+      state_topic: "wmbusmeters/ColdWaterMeter"
+      unit_of_measurement: "m³"
+      device_class: water
+      state_class: total
+      value_template: "{{ value_json.total_m3 }}"
+      unique_id: f92f9e85-a1b3-4272-a0eb-ff90ae3952cb
+    - name: "Bathroom Heater Room Temperature"
+      state_topic: "wmbusmeters/BathroomHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_room_c }}"
+      unique_id: 1f301149-069c-4629-aba1-99eca9873dd0
+    - name: "Bedroom Heater Room Temperature"
+      state_topic: "wmbusmeters/BedroomHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_room_c }}"
+      unique_id: c9342519-98ce-4ed6-80b4-c9bb3966ff44
+    - name: "Kitchen Heater Room Temperature"
+      state_topic: "wmbusmeters/KitchenHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_room_c }}"
+      unique_id: 8f878181-1659-4198-86cb-8343198f4492
+    - name: "Living Room Heater Room Temperature"
+      state_topic: "wmbusmeters/LivingRoomHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_room_c }}"
+      unique_id: f3a7ab8c-45e9-47e6-87c8-04833ad44771
+    - name: "Loggia Heater Room Temperature"
+      state_topic: "wmbusmeters/LoggiaHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_room_c }}"
+      unique_id: 372cc99f-bcbb-486a-a254-5ee9e94cc6cb
+    - name: "Bathroom Heater Radiator Temperature"
+      state_topic: "wmbusmeters/BathroomHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_radiator_c }}"
+      unique_id: 52f9677f-9b99-4707-a469-fa6c3dac7135
+    - name: "Bedroom Heater Radiator Temperature"
+      state_topic: "wmbusmeters/BedroomHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_radiator_c }}"
+      unique_id: 5831e154-77f7-46d0-baf4-4a7f6cc61d2a
+    - name: "Kitchen Heater Radiator Temperature"
+      state_topic: "wmbusmeters/KitchenHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_radiator_c }}"
+      unique_id: d221972d-52ad-4bc1-a964-1e44ec89c559
+    - name: "Living Room Heater Radiator Temperature"
+      state_topic: "wmbusmeters/LivingRoomHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_radiator_c }}"
+      unique_id: d9467dcd-494a-4c93-8435-b18453bc74ea
+    - name: "Loggia Heater Radiator Temperature"
+      state_topic: "wmbusmeters/LoggiaHeater"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+      value_template: "{{ value_json.temp_radiator_c }}"
+      unique_id: 2ac8b1b7-ea61-41e7-94f7-e0530fc46106
+      

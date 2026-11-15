@@ -1,0 +1,250 @@
+views:
+  - title: Weekly
+    cards:
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.unavailable_zigbee_devices
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_entities
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_services
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.count_entities
+          - sensor.count_unknown_entities
+          - sensor.count_unavailable_entities
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.count_of_fritz_entities
+          - sensor.count_of_fritz_devices
+        days_to_show: 365
+        stat_types:
+          - mean
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.count_of_device_trackers
+          - sensor.count_of_sensors
+          - sensor.count_of_automations
+          - sensor.count_of_binary_sensors
+          - sensor.count_of_lights
+          - sensor.count_of_switches
+        days_to_show: 365
+        stat_types:
+          - mean
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.processor_use
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.memory_free
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.disk_use_percent_config
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.processor_temperature
+        stat_types:
+          - mean
+        days_to_show: 365
+      - chart_type: line
+        period: week
+        type: statistics-graph
+        entities:
+          - sensor.binary_sensors
+          - sensor.automations
+          - sensor.buttons
+          - sensor.devices
+          - sensor.sensors
+          - sensor.integrations
+          - sensor.entities
+          - sensor.device_trackers
+          - sensor.lights
+        days_to_show: 365
+        stat_types:
+          - state
+  - title: Daily
+    path: daily
+    cards:
+      - chart_type: line
+        period: day
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_entities
+        stat_types:
+          - mean
+      - chart_type: line
+        period: day
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_services
+        stat_types:
+          - mean
+        days_to_show: 30
+      - chart_type: line
+        period: day
+        type: statistics-graph
+        entities:
+          - sensor.processor_use
+        stat_types:
+          - mean
+        days_to_show: 30
+  - title: Hourly
+    path: hourly
+    cards:
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.unavailable_zigbee_devices
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_entities
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_services
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.disk_use_percent_config
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.processor_use
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.processor_temperature
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.memory_free
+        stat_types:
+          - mean
+        days_to_show: 2
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.count_of_fritz_entities
+          - sensor.count_of_fritz_devices
+        days_to_show: 2
+        stat_types:
+          - mean
+      - chart_type: line
+        period: hour
+        type: statistics-graph
+        entities:
+          - sensor.count_of_device_trackers
+          - sensor.count_of_sensors
+          - sensor.count_of_automations
+          - sensor.count_of_binary_sensors
+          - sensor.count_of_lights
+          - sensor.count_of_switches
+        days_to_show: 2
+        stat_types:
+          - mean
+  - type: masonry
+    path: 5-min
+    title: 5 min
+    cards:
+      - chart_type: line
+        period: 5minute
+        type: statistics-graph
+        entities:
+          - sensor.watchman_missing_entities
+        stat_types:
+          - mean
+        days_to_show: 1
+      - chart_type: line
+        period: 5minute
+        type: statistics-graph
+        entities:
+          - sensor.count_entities
+          - sensor.count_unknown_entities
+          - sensor.count_unavailable_entities
+        stat_types:
+          - mean
+        days_to_show: 1
+  - title: Status
+    path: status
+    cards:
+      - show_name: true
+        show_icon: true
+        type: button
+        icon: mdi:shield
+        tap_action:
+          action: call-service
+          service: watchman.report
+          target: {}
+          data:
+            create_file: true
+        name: Watchman report

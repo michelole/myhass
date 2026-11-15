@@ -1,0 +1,54 @@
+# https://github.com/joostlek/python-waqi/pull/485
+# sensor.aqi_pm2_5:
+#   device_class: pm25
+#   unit_of_measurement: µg/m³
+
+# sensor.aqi_pm10:
+#   device_class: pm10
+#   unit_of_measurement: µg/m³
+
+# sensor.aqi_carbon_monoxide:
+#   device_class: carbon_monoxide
+
+sensor.hp_deskjet_3630_series_black_ink:
+  state_class: measurement
+
+sensor.hp_deskjet_3630_series_tri_color_ink:
+  state_class: measurement
+
+sensor.pollenflug_ambrosia_50:
+  state_class: measurement
+  
+sensor.pollenflug_beifuss_50:
+  state_class: measurement
+  
+sensor.pollenflug_birke_50:
+  state_class: measurement
+  
+sensor.pollenflug_erle_50:
+  state_class: measurement
+  
+sensor.pollenflug_esche_50:
+  state_class: measurement
+  
+sensor.pollenflug_graeser_50:
+  state_class: measurement
+  
+sensor.pollenflug_hasel_50:
+  state_class: measurement 
+  
+sensor.pollenflug_roggen_50:
+  state_class: measurement
+  
+sensor.fritz_box_7590_link_download_noise_margin:
+  state_class: measurement
+  
+sensor.fritz_box_7590_link_download_power_attenuation:
+  state_class: measurement
+  
+sensor.fritz_box_7590_link_download_throughput:
+  state_class: measurement
+
+sensor.fritz_box_7590_link_upload_throughput:
+  state_class: measurement
+

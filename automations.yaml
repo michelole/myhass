@@ -1,0 +1,4503 @@
+- id: '1627846120550'
+  alias: Notify to turn AC on
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.bedroom_netatmo_temperature
+    trigger: state
+  conditions:
+  - condition: time
+    before: input_datetime.good_night
+    after: 08:30:00
+  - condition: numeric_state
+    entity_id: sensor.bedroom_netatmo_temperature
+    above: input_number.high_temp
+  - condition: template
+    value_template: "{{ states('sensor.openweathermap_temperature') | float >\n   states('ssensor.bedroom_netatmo_temperature')
+      | float }}"
+  actions:
+  - action: script.1662825053499
+    metadata: {}
+    data:
+      title: AC
+      body: Turn AC on
+  - data:
+      value: AC
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  mode: single
+- id: '1639518972748'
+  alias: Notify of high humidity
+  description: ''
+  triggers:
+  - entity_id: sensor.loggia_humidity
+    above: input_number.high_humidity
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    trigger: numeric_state
+  - entity_id: sensor.kitchen_humidity
+    above: input_number.high_humidity
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    trigger: numeric_state
+  - entity_id: sensor.bedroom_humidity
+    above: input_number.high_humidity
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    trigger: numeric_state
+  - entity_id:
+    - sensor.bathroom_tvoc_humidity
+    above: input_number.high_humidity
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    trigger: numeric_state
+  - entity_id: sensor.living_room_humidity
+    above: input_number.high_humidity
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    trigger: numeric_state
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+  actions:
+  - data:
+      value: High humidity
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  mode: single
+- id: '1647779824138'
+  alias: Bathroom Humidity
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.bathroom_humidity
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+  actions:
+  - data:
+      transition: 60
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{(states(''sensor.bathroom_humidity'') | float * -6 + 420) % 360}}'
+      - 100
+    target:
+      entity_id: light.bathroom_indicator_light
+    enabled: true
+    action: light.turn_on
+  mode: single
+- id: '1648067274319'
+  alias: Good evening
+  description: ''
+  triggers:
+  - at: input_datetime.evening_time
+    trigger: time
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+    enabled: false
+  actions:
+  - if:
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - action: script.dim_lights
+      metadata: {}
+      data: {}
+      enabled: false
+    - data:
+        value: 25
+      target:
+        entity_id: input_number.brightness
+      action: input_number.set_value
+    - data: {}
+      action: light.turn_off
+      target:
+        entity_id:
+        - light.bedroom_indicator_light
+        - light.bedroom_corner_light
+    - action: light.turn_on
+      metadata: {}
+      target:
+        entity_id: light.living_room_tv_backlight
+      data:
+        transition: 60
+        brightness_pct: 10
+  mode: single
+- id: '1648067336678'
+  alias: Good night
+  description: ''
+  triggers:
+  - at: input_datetime.good_night
+    trigger: time
+  conditions: []
+  actions:
+  - action: script.asleep
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1648067358953'
+  alias: Good morning
+  description: ''
+  triggers:
+  - at: input_datetime.wake_time
+    trigger: time
+    id: home
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+    enabled: false
+  actions:
+  - if:
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - data:
+        value: 50
+      target:
+        entity_id: input_number.brightness
+      action: input_number.set_value
+    - action: light.turn_off
+      metadata: {}
+      target:
+        entity_id: light.living_room_tv_backlight
+      data: {}
+    - action: switch.turn_on
+      metadata: {}
+      target:
+        entity_id: switch.bedroom_bedroom_air_sensor
+      data: {}
+  mode: single
+- id: '1648156014807'
+  alias: Living Room CO2
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.living_room_co2
+    trigger: state
+    id: co2
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+    id: brightness
+  conditions:
+  - condition: state
+    entity_id: cover.living_room_blind
+    state: []
+    attribute: is_closed
+    enabled: false
+  - condition: numeric_state
+    entity_id: cover.living_room_blind
+    attribute: current_position
+    above: 30
+  actions:
+  - data:
+      transition: 60
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{((states(''sensor.living_room_co2'') | float * -3 + 6000) / 25) % 360}}'
+      - 100
+    enabled: true
+    action: light.turn_on
+    target:
+      entity_id: light.living_room_indicator_light
+  mode: single
+- id: '1650801918671'
+  alias: High bedroom temperature
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.outdoor_temperature
+    trigger: state
+  - entity_id:
+    - sensor.bedroom_temperature
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: "{{ states('sensor.outdoor_temperature') | float <\n   states('sensor.bedroom_temperature')
+      | float }}"
+  - condition: numeric_state
+    entity_id: sensor.bedroom_temperature
+    above: input_number.high_temp
+  - condition: state
+    entity_id: binary_sensor.bedroom_window_contact
+    state: 'off'
+  - condition: time
+    before: input_datetime.good_night
+    after: '19:00:00'
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+  actions:
+  - data:
+      value: 'Open bedroom window '
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  mode: single
+- id: '1651003290126'
+  alias: Notify to open living room window
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.outdoor_temperature
+    trigger: state
+  - entity_id:
+    - sensor.living_room_temperature
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: "{{ states('sensor.outdoor_temperature') | float <\n   states('sensor.living_room_temperature')
+      | float }}"
+  - condition: numeric_state
+    entity_id: sensor.living_room_temperature
+    above: input_number.high_temp
+  - condition: state
+    entity_id: sensor.outdoor_temperature
+    state: 'off'
+    enabled: false
+  - condition: time
+    before: input_datetime.good_night
+    after: 08:30:00
+    enabled: false
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+  actions:
+  - data:
+      value: Open
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  - action: script.1662825053499
+    metadata: {}
+    data:
+      title: Windows
+      body: Open windows
+  mode: single
+- id: '1655152040831'
+  alias: Notify to close living room window
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.outdoor_temperature
+    trigger: state
+  - entity_id:
+    - sensor.living_room_temperature
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: "{{ states('sensor.outdoor_temperature') | float >\n   states('sensor.living_room_temperature')
+      | float }}"
+  - condition: numeric_state
+    entity_id: sensor.outdoor_temperature
+    above: input_number.high_temp
+  - condition: state
+    entity_id: binary_sensor.living_room_windows
+    state:
+    - 'on'
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+  actions:
+  - data:
+      value: Close
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  - action: script.1662825053499
+    metadata: {}
+    data:
+      title: Window
+      body: Close windows
+  mode: single
+- id: '1662820808221'
+  alias: Home is empty
+  description: ''
+  triggers:
+  - entity_id: zone.home
+    below: 1
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - data: {}
+    action: script.turn_off_light_sources
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      floor_id: main_floor
+  - action: script.music_off
+    metadata: {}
+    data: {}
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - switch.bedroom_heater
+      - switch.air_conditioner
+    data: {}
+  - action: fan.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - fan.dmaker_p18_b585_fan
+      - fan.air_purifier
+    data: {}
+  - action: humidifier.turn_off
+    metadata: {}
+    target:
+      entity_id: humidifier.deerma_jsq2w_0070_humidifier
+    data: {}
+  mode: single
+- id: '1662822277725'
+  alias: Home is not empty
+  description: ''
+  triggers:
+  - entity_id: zone.home
+    above: 0
+    trigger: numeric_state
+  - domain: mqtt
+    device_id: 1da9973ba227345c90bb14417e2df238
+    type: action
+    subtype: single
+    trigger: device
+    enabled: false
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        before: input_datetime.evening_time
+        after: input_datetime.wake_time
+      sequence:
+      - data:
+          value: 100
+        target:
+          entity_id: input_number.brightness
+        action: input_number.set_value
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 100
+        enabled: false
+        target:
+          entity_id: light.secondary_lights
+    - conditions:
+      - condition: time
+        before: input_datetime.good_night
+        after: input_datetime.evening_time
+      sequence:
+      - data:
+          value: 50
+        target:
+          entity_id: input_number.brightness
+        action: input_number.set_value
+      - action: script.dim_lights
+        metadata: {}
+        data: {}
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.corridor_ceiling_light
+    enabled: false
+  mode: single
+- id: '1662825824991'
+  alias: Clear humidity notification
+  description: ''
+  triggers:
+  - minutes: /15
+    trigger: time_pattern
+  conditions:
+  - condition: and
+    conditions:
+    - condition: numeric_state
+      entity_id: sensor.loggia_humidity
+      below: input_number.high_humidity
+    - condition: numeric_state
+      entity_id: sensor.bedroom_humidity
+      below: input_number.high_humidity
+    - condition: numeric_state
+      entity_id: sensor.living_room_humidity
+      below: input_number.high_humidity
+    - condition: numeric_state
+      entity_id: sensor.kitchen_humidity
+      below: input_number.high_humidity
+    - condition: numeric_state
+      entity_id: sensor.bathroom_tvoc_humidity
+      below: input_number.high_humidity
+  actions:
+  - data:
+      value: ' '
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  mode: single
+- id: '1662826184042'
+  alias: Notify to water plants
+  description: ''
+  triggers:
+  - minutes: 5
+    trigger: time_pattern
+  conditions:
+  - condition: and
+    conditions:
+    - condition: numeric_state
+      entity_id: sensor.plant_aglaonema_moisture
+      below: input_number.dry_plant
+    - condition: numeric_state
+      entity_id: sensor.plant_epipremnum_moisture
+      below: input_number.dry_plant
+      enabled: true
+    - condition: numeric_state
+      entity_id: sensor.plant_monstera_moisture
+      below: input_number.dry_plant
+      enabled: true
+    - condition: numeric_state
+      entity_id: sensor.plant_pachira_moisture
+      below: input_number.dry_plant
+      enabled: true
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  actions:
+  - data:
+      value: Water plants
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+    enabled: false
+  - action: persistent_notification.create
+    metadata: {}
+    data:
+      message: Water plants
+  mode: single
+- id: '1665945981101'
+  alias: Bedroom Humidity
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.bedroom_humidity
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        before: input_datetime.evening_time
+        after: input_datetime.wake_time
+      sequence:
+      - data:
+          transition: 60
+          brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+          hs_color:
+          - '{{(states(''sensor.bedroom_humidity'') | float * -6 + 420) % 360}}'
+          - 100
+        action: light.turn_on
+        target:
+          entity_id: light.bedroom_indicator_light
+  mode: single
+- id: '1665946147504'
+  alias: Kitchen Humidity
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.kitchen_humidity
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      transition: 60
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{(states(''sensor.kitchen_humidity'') | float * -6 + 420) % 360}}'
+      - 100
+    target:
+      entity_id: light.kitchen_indicator_light
+    enabled: true
+    action: light.turn_on
+  mode: single
+- id: '1665946219817'
+  alias: Living Room Humidity
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.living_room_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  mode: single
+- id: '1665946280316'
+  alias: Loggia Humidity
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.loggia_humidity
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions:
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  actions:
+  - data:
+      transition: 60
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{(states(''sensor.loggia_humidity'') | float * -6 + 420) % 360}}'
+      - 100
+    action: light.turn_on
+    target:
+      entity_id: light.loggia_indicator_light
+  mode: single
+- id: '1665946334244'
+  alias: Outside Humidity
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.outdoor_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{(states(''sensor.outdoor_humidity'') | float * -6 + 420) % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: false
+  mode: single
+- id: '1665946505419'
+  alias: Weather Humidity
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.openweathermap_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{(states(''sensor.openweathermap_humidity'') | float * -6 + 420) % 360}}'
+      - 100
+    target:
+      entity_id:
+  mode: single
+- id: '1667044296927'
+  alias: Noise
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.living_room_netatmo_noise
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{(((states(''sensor.living_room_netatmo_noise'') | float - 85) * 120) /
+        (45-85)) % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+    action: light.turn_on
+  mode: single
+- id: '1667159610326'
+  alias: Light helper changes
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+    target:
+      entity_id:
+  mode: single
+- id: '1668371015706'
+  alias: OK bedroom humidity
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.outdoor_humidity
+    id: outdoor_humidity_changed
+  - platform: state
+    entity_id:
+    - sensor.bedroom_humidity
+    id: bedroom_humidity_changed
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_window_contact
+    from: 'off'
+    to: 'on'
+    id: bedroom_window_opened
+  condition:
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+    enabled: false
+  - condition: or
+    conditions:
+    - condition: trigger
+      id: bedroom_window_opened
+    - condition: template
+      value_template: "{{ states('sensor.outdoor_humidity') | float >\n   states('sensor.bedroom_humidity')
+        | float }}"
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  action:
+  - service: light.turn_on
+    data:
+      effect: none
+    target:
+      entity_id:
+  mode: single
+- id: '1668373218779'
+  alias: High loggia humidity
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.outdoor_humidity
+    trigger: state
+  - entity_id:
+    - sensor.loggia_humidity
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: "{{ states('sensor.outdoor_humidity') | float -\n   states('sensor.loggia_humidity')
+      | float < states('input_number.humidity_hysteresis') | float}}"
+  - condition: numeric_state
+    entity_id: sensor.loggia_humidity
+    above: input_number.high_humidity
+    enabled: true
+  - condition: state
+    entity_id: binary_sensor.loggia_window_contact
+    state: 'off'
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+    enabled: false
+  actions:
+  - data:
+      value: 'Open loggia window '
+    target:
+      entity_id: input_text.matrix_text
+    enabled: false
+    action: input_text.set_value
+  - data:
+      effect: pulse
+    action: light.turn_on
+    target:
+      entity_id: light.loggia_indicator_light
+  mode: single
+- id: '1668374352504'
+  alias: High kitchen humidity
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.outdoor_humidity
+    trigger: state
+  - entity_id:
+    - sensor.kitchen_vindstyrka_humidity
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: "{{ states('sensor.outdoor_humidity') | float -\n   states('sensor.kitchen_humidity')
+      | float < states('input_number.humidity_hysteresis') | float}}"
+  - condition: numeric_state
+    entity_id: sensor.kitchen_vindstyrka_humidity
+    above: input_number.high_humidity
+    enabled: true
+  - condition: state
+    entity_id: binary_sensor.kitchen_window_contact
+    state: 'off'
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+    enabled: false
+  actions:
+  - data:
+      value: 'Open kitchen window '
+    target:
+      entity_id: input_text.matrix_text
+    enabled: false
+    action: input_text.set_value
+  - data:
+      effect: pulse
+    target:
+      entity_id: light.kitchen_indicator_light
+    action: light.turn_on
+  mode: single
+- id: '1668375802641'
+  alias: OK kitchen humidity
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.outdoor_humidity
+    id: outdoor_humidity_changed
+  - platform: state
+    entity_id:
+    - sensor.kitchen_humidity
+    id: kitchen_humidity_changed
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_window_contact
+    from: 'off'
+    to: 'on'
+    id: kitchen_window_opened
+  condition:
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(state_attr(this.entity_id,
+      ''last_triggered'')) | int > 1800)}}'
+    enabled: false
+  - condition: or
+    conditions:
+    - condition: trigger
+      id: kitchen_window_opened
+    - condition: template
+      value_template: "{{ states('sensor.outdoor_humidity') | float -\n   states('sensor.kitchen_humidity')
+        | float > states('input_number.humidity_hysteresis') | float}}"
+  - condition: time
+    before: input_datetime.good_night
+    after: input_datetime.wake_time
+  action:
+  - service: light.turn_on
+    data:
+      effect: none
+    target:
+      entity_id:
+  mode: single
+- id: '1672091196240'
+  alias: Living room plants
+  description: ''
+  triggers:
+  - at: '10:00:00'
+    id: morning
+    trigger: time
+  - at: '15:00:00'
+    id: evening
+    trigger: time
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - morning
+      sequence:
+      - data: {}
+        action: switch.turn_on
+    - conditions:
+      - condition: trigger
+        id:
+        - evening
+      sequence:
+      - data: {}
+        action: switch.turn_off
+  mode: single
+- id: '1678619748164'
+  alias: Bedroom Temp
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.bedroom_temperature
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.bedroom_temperature'') | float - 30)/(20 - 30) %
+        360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678620174440'
+  alias: Outside Temp
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.outdoor_temperature
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.outdoor_temperature'') | float - 30)/(20 - 30) %
+        360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678620548038'
+  alias: Weather Temp
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.openweathermap_temperature
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.openweathermap_temperature'') | float - 30)/(20
+        - 30) % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678620653328'
+  alias: Kitchen Temp
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.kitchen_temperature
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.kitchen_temperature'') | float - 30)/(20 - 30) %
+        360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678620724127'
+  alias: Living Room Temp
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.living_room_temperature
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.living_room_temperature'') | float - 30)/(20 - 30)
+        % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678620814299'
+  alias: Loggia Temp
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.loggia_temperature
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.loggia_temperature'') | float - 30)/(20 - 30) %
+        360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678621447455'
+  alias: Delta Bathroom Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_bathroom_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_bathroom_humidity'') | float - 25)/(-25 -
+        25) % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678621515734'
+  alias: Delta Outside Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_outdoor_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_outdoor_humidity'') | float - 25)/(-25 - 25)
+        % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678621953694'
+  alias: Delta Bedroom Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_bedroom_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_bedroom_humidity'') | float - 25)/(-25 - 25)
+        % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678622011392'
+  alias: Delta Kitchen Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_kitchen_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_kitchen_humidity'') | float - 25)/(-25 - 25)
+        % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678622050717'
+  alias: Delta Living Room Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_living_room_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_living_room_humidity'') | float - 25)/(-25
+        - 25) % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678622083589'
+  alias: Delta Loggia Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_loggia_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_loggia_humidity'') | float - 25)/(-25 - 25)
+        % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1678622113631'
+  alias: Delta Weather Hum
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.delta_weather_humidity
+  - platform: state
+    entity_id:
+    - input_number.brightness
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{120 * (states(''sensor.delta_weather_humidity'') | float - 25)/(-25 - 25)
+        % 360}}'
+      - 100
+    target:
+      entity_id:
+    enabled: true
+  mode: single
+- id: '1682192371389'
+  alias: Kitchen PM25
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.kitchen_vindstyrka_pm25
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      transition: 60
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{ -120 * (states(''sensor.kitchen_vindstyrka_pm25'') | float - 100) / 100
+        % 360}}'
+      - 100
+    target:
+      entity_id: light.kitchen_ceiling_light_rgb
+    enabled: true
+    action: light.turn_on
+  mode: single
+- id: '1693063624031'
+  alias: Intercom
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.nuki_intercom_ring_action
+    from:
+    - 'off'
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - data:
+      volume_level: 0.2
+    action: media_player.volume_set
+    target:
+      device_id: 425bd8bb1e56ccab020b317b469d04a4
+  - data:
+      media:
+        media_content_id: media-source://tts/google_translate?message=Intercom+is+ringing&language=en
+        media_content_type: audio/mp3
+        metadata:
+          title: Intercom is ringing
+          thumbnail: https://brands.home-assistant.io/_/google_translate/logo.png
+          media_class: app
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://tts
+          - media_content_type: audio/mp3
+            media_content_id: media-source://tts/google_translate?message=Intercom+is+ringing&language=en
+    action: media_player.play_media
+    target:
+      device_id: 425bd8bb1e56ccab020b317b469d04a4
+  mode: single
+- id: '1693064067569'
+  alias: Battery Low Notification
+  description: Battery Low Notification with auto dismiss
+  triggers:
+  - trigger: event
+    event_type: battery_notes_battery_threshold
+    event_data:
+      battery_low: true
+    id: low
+    alias: Battery went low
+  - trigger: event
+    event_type: battery_notes_battery_threshold
+    event_data:
+      battery_low: false
+    id: high
+    alias: Battery went high
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - low
+      sequence:
+      - action: persistent_notification.create
+        data:
+          title: '{{ trigger.event.data.device_name }} Battery Low
+
+            '
+          notification_id: '{{ trigger.event.data.device_id }}-{{ trigger.event.data.source_entity_id
+            }}'
+          message: 'The device has a battery level of {{ trigger.event.data.battery_level
+            }}% {{ ''\n'' -}} You need {{ trigger.event.data.battery_quantity }}×
+            {{ trigger.event.data.battery_type }}
+
+            '
+        enabled: false
+      - action: script.1662825053499
+        metadata: {}
+        data:
+          body: The device has a battery level of {{ trigger.event.data.battery_level
+            }}% {{ '\n' -}} You need {{ trigger.event.data.battery_quantity }}× {{
+            trigger.event.data.battery_type }}
+          title: '{{ trigger.event.data.device_name }} Battery Low'
+    - conditions:
+      - condition: trigger
+        id:
+        - high
+      sequence:
+      - action: persistent_notification.dismiss
+        data:
+          notification_id: '{{ trigger.event.data.device_id }}-{{ trigger.event.data.source_entity_id
+            }}'
+  mode: queued
+- id: '1693157209787'
+  alias: Loggia Heating Boost
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.loggia_window_contact
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    trigger: state
+    from: 'on'
+    to: 'off'
+    id: window_closed
+  - trigger: light.turned_on
+    target:
+      entity_id: light.loggia_monitor_light
+    options: {}
+  - trigger: light.turned_off
+    target:
+      entity_id: light.loggia_monitor_light
+    options: {}
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  - condition: state
+    entity_id: binary_sensor.loggia_window_contact
+    state: 'off'
+    enabled: true
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+    enabled: false
+  actions:
+  - choose:
+    - conditions:
+      - condition: light.is_on
+        target:
+          entity_id: light.loggia_monitor_light
+        options: {}
+      - condition: time
+        after: input_datetime.wake_time
+        before: input_datetime.good_night
+      sequence:
+      - delay:
+          hours: 0
+          minutes: 5
+          seconds: 0
+          milliseconds: 0
+        enabled: false
+      - action: climate.set_temperature
+        metadata: {}
+        target:
+          entity_id: climate.loggia_thermostat
+        data:
+          hvac_mode: heat
+          temperature: '{{ states(''input_number.cozy_loggia_temp'') }}'
+        enabled: false
+      - action: climate.set_preset_mode
+        metadata: {}
+        target:
+          entity_id: climate.loggia_thermostat
+        data:
+          preset_mode: comfort
+      alias: Heating boost
+    - conditions:
+      - condition: light.is_off
+        target:
+          entity_id: light.loggia_monitor_light
+        options: {}
+      sequence:
+      - delay:
+          hours: 0
+          minutes: 5
+          seconds: 0
+          milliseconds: 0
+        enabled: false
+      - action: climate.set_temperature
+        metadata: {}
+        target:
+          entity_id: climate.loggia_thermostat
+        data:
+          hvac_mode: auto
+        enabled: false
+      - action: climate.set_preset_mode
+        metadata: {}
+        target:
+          entity_id: climate.loggia_thermostat
+        data:
+          preset_mode: eco
+      alias: Heating auto
+  mode: restart
+- id: '1696754354880'
+  alias: Table Light
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.presence_sensor_dining
+    to: 'on'
+    id: table-detected
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    trigger: state
+  - entity_id:
+    - binary_sensor.presence_sensor_dining
+    to: 'off'
+    id: table-clear
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    trigger: state
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - table-detected
+      sequence:
+      - data:
+          transition: 30
+        target:
+          entity_id:
+          - light.living_room_table_light
+        action: light.turn_on
+        enabled: false
+    - conditions:
+      - condition: trigger
+        id:
+        - table-clear
+      - condition: time
+        after: input_datetime.evening_time
+        before: input_datetime.wake_time
+      sequence:
+      - data:
+          transition: 60
+        target:
+          entity_id:
+          - light.living_room_table_light
+        action: light.turn_off
+  mode: restart
+- id: '1696757902998'
+  alias: Loggia Convection Heater
+  description: ''
+  triggers:
+  - value_template: '{# Target temperature is higher than current (considering hysteresis)
+      #} {{ state_attr(''climate.loggia_thermostat'', ''temperature'') | float - states("sensor.loggia_temperature")
+      | float > states(''input_number.temperature_hysteresis'') | float}}'
+    id: high_target
+    trigger: template
+    alias: Target temperature is higher than actual
+  - value_template: '{# Target temperature is lower than current (considering hysteresis)
+      #} {{ state_attr(''climate.loggia_thermostat'', ''temperature'') | float - states("sensor.loggia_temperature")
+      | float < states(''input_number.temperature_hysteresis'') | float}}'
+    id: lower_target
+    trigger: template
+    alias: Target temperature is lower than actual
+  - entity_id:
+    - binary_sensor.loggia_window_contact
+    to: 'on'
+    id: open_window
+    trigger: state
+  - trigger: light.turned_off
+    target:
+      entity_id: light.loggia_monitor_light
+    options: {}
+    id: light_off
+  - trigger: light.turned_on
+    target:
+      entity_id: light.loggia_monitor_light
+    options: {}
+    id: light_on
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+      - condition: state
+        entity_id: binary_sensor.loggia_window_contact
+        state: 'off'
+        enabled: true
+      - condition: template
+        value_template: '{# Target temperature is higher than current (considering
+          hysteresis) #} {{ state_attr(''climate.loggia_thermostat'', ''temperature'')
+          | float - states("sensor.loggia_temperature") | float > states(''input_number.temperature_hysteresis'')
+          | float}}'
+        alias: Target temperature is higher than actual
+      - condition: state
+        entity_id: light.loggia_monitor_light
+        state: 'on'
+      sequence:
+      - delay:
+          hours: 0
+          minutes: 2
+          seconds: 0
+          milliseconds: 0
+      - data: {}
+        action: switch.turn_on
+        target:
+          entity_id: switch.loggia_heater
+        enabled: false
+      - action: climate.turn_on
+        metadata: {}
+        target:
+          entity_id: climate.loggia_heater
+        data: {}
+      alias: Heat
+    - conditions:
+      - condition: trigger
+        id:
+        - lower_target
+        - open_window
+        - light_off
+      sequence:
+      - data: {}
+        action: switch.turn_off
+        target:
+          entity_id: switch.loggia_heater
+        enabled: false
+      - action: climate.turn_off
+        metadata: {}
+        target:
+          entity_id: climate.loggia_heater
+        data: {}
+      alias: 'Off'
+  mode: restart
+- id: '1700428337387'
+  alias: SpeedTest
+  description: ''
+  triggers:
+  - hours: /6
+    trigger: time_pattern
+  conditions: []
+  actions:
+  - data:
+      addon: 6b87c29e_speedtest_addon
+    action: hassio.addon_start
+- id: '1701024060206'
+  alias: Pisca
+  description: ''
+  triggers:
+  - event: sunset
+    offset: 0
+    id: sunset
+    trigger: sun
+  - event: sunrise
+    offset: 0
+    id: sunrise
+    trigger: sun
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - sunrise
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.loggia_pisca
+    - conditions:
+      - condition: trigger
+        id:
+        - sunset
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.loggia_pisca
+  mode: single
+- id: '1702226836939'
+  alias: Washer Time
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.washer_remaining_time
+    trigger: state
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+  actions:
+  - data:
+      value: '{{ states(''sensor.washer_remaining_time'')[:-3] }}'
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  mode: single
+- id: '1705781947933'
+  alias: Dishwasher Time
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.dishwasher_remaining_program_time
+    trigger: state
+  - entity_id:
+    - sensor.dishwasher_program_progress
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: sensor.dishwasher_operation_state
+    state: run
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+    enabled: false
+  actions:
+  - data:
+      value: '{{ (max(as_local(as_datetime(states(''sensor.dishwasher_remaining_program_time'')))
+        - now(), timedelta(0)) | string)[:-10] }}'
+    target:
+      entity_id: input_text.matrix_text
+    action: input_text.set_value
+  - action: mqtt.publish
+    data:
+      topic: ulanzi/cmd/apps/pushed/dishwasher
+      payload: "{\n  \"text\": \"{{\n(max(as_local(as_datetime(states('sensor.dishwasher_remaining_program_time')))\n-
+        now(), timedelta(0)) | string)[:-10] }}\",\n  \"icon\": 12\n}\n"
+  mode: single
+- id: '1705782230373'
+  alias: Dishwasher ready
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.dishwasher_operation_state
+    from:
+    - run
+    trigger: state
+    to:
+    - finished
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+    enabled: true
+  actions:
+  - data:
+      volume_level: 0.21
+    target:
+      device_id:
+      - 425bd8bb1e56ccab020b317b469d04a4
+    action: media_player.volume_set
+  - data:
+      cache: false
+      entity_id: media_player.pixel_tablet
+      message: Dishwasher is ready
+    action: tts.google_translate_say
+  - target:
+      entity_id: input_text.matrix_text
+    data:
+      value: ' '
+    action: input_text.set_value
+  mode: single
+- id: '1707598239762'
+  alias: Magic Cube
+  description: ''
+  use_blueprint:
+    path: SirGoodenough/Zigbee2MQTT-Aqara-Magic-Cube-T1-Pro-CTP-R01-Xiaomi-Lumi.yaml
+    input:
+      topic: zigbee2mqtt/Cube
+      action_rotate_cw_face_1:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_bed_light
+      action_rotate_cw_face_2:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_nursery_light
+      action_rotate_ccw_face_1:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_bed_light
+      action_rotate_ccw_face_2:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_nursery_light
+      action_doubletap_face_1:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_bed_light
+        data: {}
+      action_doubletap_face_2:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_nursery_light
+      action_rotate_cw_face_3:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_bookshelf_light
+      action_rotate_ccw_face_3:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_bookshelf_light
+      action_doubletap_face_3:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_bookshelf_light
+        data: {}
+      action_doubletap_face_4:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_changing_light
+        data: {}
+      action_rotate_cw_face_4:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_changing_light
+      action_rotate_ccw_face_4:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_changing_light
+      action_doubletap_face_5:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_wall_light
+      action_rotate_cw_face_5:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_wall_light
+      action_rotate_ccw_face_5:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_wall_light
+      action_doubletap_face_6:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_corner_light
+        data: {}
+      action_rotate_cw_face_6:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_corner_light
+      action_rotate_ccw_face_6:
+      - action: script.cube_brightness
+        metadata: {}
+        data:
+          angle: '{{ trigger.payload_json.action_angle | default(0.1) | float(0.2)
+            }}'
+          light: light.bedroom_corner_light
+- id: '1712262308120'
+  alias: Bedroom Switch
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 9636e6dd1257065ff4fa434d453ef976
+    type: action
+    subtype: single_left
+    trigger: device
+    id: single_left_up
+  - domain: mqtt
+    device_id: 9636e6dd1257065ff4fa434d453ef976
+    type: action
+    subtype: single_right
+    trigger: device
+    id: single_right_up
+  - domain: mqtt
+    device_id: 9636e6dd1257065ff4fa434d453ef976
+    type: action
+    subtype: single_left_down
+    trigger: device
+    id: single_left_down
+  - domain: mqtt
+    device_id: 9636e6dd1257065ff4fa434d453ef976
+    type: action
+    subtype: single_right_down
+    trigger: device
+    id: single_right_down
+  - domain: mqtt
+    device_id: 9636e6dd1257065ff4fa434d453ef976
+    type: action
+    subtype: double_left_down
+    trigger: device
+    id: double_left_down
+  - domain: mqtt
+    device_id: 9636e6dd1257065ff4fa434d453ef976
+    type: action
+    subtype: double_right_down
+    trigger: device
+    id: double_right_down
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_left_up
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_bed_light
+    - conditions:
+      - condition: trigger
+        id:
+        - single_right_up
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_nursery_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - single_left_down
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_bookshelf_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - single_right_down
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_corner_light
+        data: {}
+        enabled: false
+      - action: script.awake_2
+        metadata: {}
+        data: {}
+        enabled: false
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id:
+          - light.bedroom_wall_light
+        data: {}
+  mode: parallel
+  max: 10
+- id: '1712351507486'
+  alias: Bathroom Buttons
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: b8c8a292c5df6c9ec427fd5bd688be8d
+    type: action
+    subtype: single
+    id: single_mirror
+    trigger: device
+  - domain: mqtt
+    device_id: b8c8a292c5df6c9ec427fd5bd688be8d
+    type: action
+    subtype: double
+    id: double_mirror
+    trigger: device
+  - domain: mqtt
+    device_id: a11d1feb16898f94d777abbb2d782ffe
+    type: action
+    subtype: single
+    trigger: device
+    id: single_toilet
+  - domain: mqtt
+    device_id: a11d1feb16898f94d777abbb2d782ffe
+    type: action
+    subtype: double
+    trigger: device
+    id: double_toilet
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_mirror
+        - single_toilet
+      sequence:
+      - data: {}
+        target:
+          entity_id: switch.bathroom_switch_right
+        action: switch.toggle
+    - conditions:
+      - condition: trigger
+        id:
+        - double_mirror
+        - double_toilet
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bathroom_ceiling_light
+        data: {}
+  mode: single
+- id: '1714936218836'
+  alias: Loggia Switch
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d5f58cabeecfa4a31fbe3a7df5fac83e
+    type: action
+    subtype: single_left
+    trigger: device
+    id: single_left
+  - domain: mqtt
+    device_id: d5f58cabeecfa4a31fbe3a7df5fac83e
+    type: action
+    subtype: single_right
+    trigger: device
+    id: single_right
+  - domain: mqtt
+    device_id: d5f58cabeecfa4a31fbe3a7df5fac83e
+    type: action
+    subtype: double_left
+    id: double_left
+    trigger: device
+  - domain: mqtt
+    device_id: d5f58cabeecfa4a31fbe3a7df5fac83e
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_both
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_right
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.loggia_desk_2
+        data: {}
+      - action: switch.toggle
+        metadata: {}
+        target:
+          entity_id: switch.fire_tablet_screen
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - single_left
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.loggia_office_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - double_both
+      sequence:
+      - metadata: {}
+        data:
+          repeat: 1
+          room: Loggia
+        action: script.clean_room_if_day
+        enabled: false
+  mode: parallel
+  max: 10
+- id: '1715880797568'
+  alias: Kitchen Switch
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: e3e0a79aca645ccfed79756f33899286
+    type: action
+    subtype: single_left
+    trigger: device
+    id: single_left
+  - domain: mqtt
+    device_id: e3e0a79aca645ccfed79756f33899286
+    type: action
+    subtype: single_right
+    trigger: device
+    id: single_right
+  - domain: mqtt
+    device_id: e3e0a79aca645ccfed79756f33899286
+    type: action
+    subtype: double_left
+    trigger: device
+    id: double_left
+  - domain: mqtt
+    device_id: e3e0a79aca645ccfed79756f33899286
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_both
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_right
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: light.kitchen_sink_light
+            state:
+            - 'on'
+          - condition: state
+            entity_id: light.kitchen_stove_light
+            state:
+            - 'on'
+            enabled: false
+          sequence:
+          - action: light.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id:
+              - light.kitchen_sink_light
+              - light.kitchen_stove_light
+        default:
+        - action: light.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id:
+            - light.kitchen_sink_light
+            - light.kitchen_stove_light
+        - if:
+          - condition: time
+            after: input_datetime.wake_time
+            before: '11:00:00'
+          then:
+          - action: switch.toggle
+            metadata: {}
+            data: {}
+            target:
+              entity_id: switch.bot_2556
+            enabled: false
+    - conditions:
+      - condition: trigger
+        id:
+        - double_both
+      sequence:
+      - metadata: {}
+        data:
+          repeat: 3
+          room: Kitchen
+        action: script.clean_room_if_day
+        enabled: false
+    - conditions:
+      - condition: trigger
+        id:
+        - single_left
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.kitchen_ceiling_light_white
+  mode: parallel
+  max: 10
+- id: '1716765012457'
+  alias: Clear Matrix Text
+  description: ''
+  trigger:
+  - platform: time_pattern
+    hours: '*'
+    minutes: '5'
+  condition: []
+  action:
+  - service: input_text.set_value
+    metadata: {}
+    data:
+      value: ' '
+    target:
+      entity_id: input_text.matrix_text
+  mode: single
+- id: '1716914148214'
+  alias: Corridor Switch
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 901bb7269d54960f02af1700ec365019
+    type: action
+    subtype: single
+    trigger: device
+    id: single_secondary
+  - domain: mqtt
+    device_id: 901bb7269d54960f02af1700ec365019
+    type: action
+    subtype: double
+    id: double_secondary
+    trigger: device
+  - domain: mqtt
+    device_id: 1da9973ba227345c90bb14417e2df238
+    type: action
+    subtype: double
+    id: double_main
+    trigger: device
+  - domain: mqtt
+    device_id: 1da9973ba227345c90bb14417e2df238
+    type: action
+    subtype: single
+    trigger: device
+    id: single_main
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_secondary
+        - single_main
+      sequence:
+      - action: light.toggle
+        target:
+          entity_id: light.corridor_ceiling_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - double_secondary
+        - double_main
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.corridor_ceiling_light
+  mode: parallel
+  max: 10
+- id: '1717004540576'
+  alias: Bedroom Switch
+  description: ''
+  triggers:
+  - type: changed_states
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    entity_id: ffa224015bcf33c37d402851ccd03384
+    domain: switch
+    id: single_main_left
+    trigger: device
+  - type: changed_states
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    entity_id: cb008448df1257c1edde9c988b0c078e
+    domain: switch
+    id: single_main_right
+    trigger: device
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: double_left
+    id: double_main_left
+    trigger: device
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_main_right
+  - type: changed_states
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    entity_id: 1a969d6464cd531738f94e0d4cdc9658
+    domain: switch
+    id: single_secondary_left
+    trigger: device
+  - type: changed_states
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    entity_id: 7826bef4a9d710fbaf4f8771217eced7
+    domain: switch
+    id: single_secondary_right
+    trigger: device
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: double_left
+    id: double_secondary_left
+    trigger: device
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_secondary_right
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: single_both
+    trigger: device
+    id: single_main_both
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: single_both
+    trigger: device
+    id: single_secondary_both
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - double_main_right
+        - double_secondary_right
+      sequence:
+      - metadata: {}
+        data:
+          repeat: 1
+          room: Bedroom
+        action: script.clean_room_if_day
+    - conditions:
+      - condition: trigger
+        id:
+        - single_main_right
+      sequence:
+      - type: toggle
+        device_id: 4f6b527b1d7cb5c9671dd4a4bb33713b
+        entity_id: b2ef886436e643ea31dbb6f9a413dd26
+        domain: light
+    - conditions:
+      - condition: trigger
+        id:
+        - single_secondary_right
+      sequence:
+      - type: toggle
+        device_id: 4f6b527b1d7cb5c9671dd4a4bb33713b
+        entity_id: b2ef886436e643ea31dbb6f9a413dd26
+        domain: light
+    - conditions:
+      - condition: trigger
+        id:
+        - single_main_left
+        - single_secondary_left
+      sequence:
+      - metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_ceiling_light
+        action: light.toggle
+    - conditions:
+      - condition: trigger
+        id:
+        - single_main_both
+        - single_secondary_both
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 100
+        target:
+          device_id: db2236b4870d1b6f68b492b0cbc6510e
+  mode: parallel
+  max: 2
+- id: '1720187580028'
+  alias: Bathroom Switch
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 7a7f60fb5305767c265028273bf8fe7c
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_right
+  - domain: mqtt
+    device_id: 7a7f60fb5305767c265028273bf8fe7c
+    type: action
+    subtype: single_left
+    trigger: device
+    id: single_left
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - double_right
+      sequence:
+      - metadata: {}
+        data:
+          repeat: 3
+          room: Bathroom
+        action: script.clean_room_if_day
+        enabled: false
+    - conditions:
+      - condition: trigger
+        id:
+        - single_left
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bathroom_ceiling_light
+  mode: parallel
+  max: 10
+- id: '1726413001647'
+  alias: Battery Replaced
+  description: Battery Replaced
+  trigger:
+  - platform: event
+    event_type: battery_notes_battery_increased
+  condition: []
+  action:
+  - data:
+      device_id: '{{ trigger.event.data.device_id }}'
+      source_entity_id: '{{ trigger.event.data.source_entity_id }}'
+    action: battery_notes.set_battery_replaced
+  mode: queued
+- id: '1726415519450'
+  alias: Water Leak
+  description: ''
+  trigger:
+  - type: moist
+    platform: device
+    device_id: 182e40952f9d7fb781cacb939bcc4310
+    entity_id: 87d7c917d5364a19c19c3215f4fcca6b
+    domain: binary_sensor
+  - type: moist
+    platform: device
+    device_id: 6f405313785bb4de4b04aee14f89b5fc
+    entity_id: a54fd157574efe1642c282dad44c1802
+    domain: binary_sensor
+  condition: []
+  action:
+  - action: script.1662825053499
+    data:
+      body: Water Leak
+      title: Water Leak
+  mode: single
+- id: '1729435115042'
+  alias: Living Room Table Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 702349584c9acfc05f255b777e262875
+    type: action
+    subtype: single
+    trigger: device
+    id: single
+  - domain: mqtt
+    device_id: 702349584c9acfc05f255b777e262875
+    type: action
+    subtype: double
+    trigger: device
+    id: double
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.living_room_table_light
+    - conditions:
+      - condition: trigger
+        id:
+        - double
+      sequence:
+      - type: toggle
+        device_id: 46be51005ec6962c9f96ebca231a4525
+        entity_id: 9f6f3750e288e1b2bff24163fbcc34d4
+        domain: light
+  mode: single
+- id: '1729437738490'
+  alias: Loggia Desk Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 4ffd8dc32da67e6b243efdb2b461fa43
+    type: action
+    subtype: single
+    trigger: device
+    id: single
+  - domain: mqtt
+    device_id: 4ffd8dc32da67e6b243efdb2b461fa43
+    type: action
+    subtype: double
+    trigger: device
+    id: double
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.loggia_desk_2
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - double
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.loggia_office_light
+        data: {}
+  mode: single
+- id: '1729441575556'
+  alias: Bedroom Bed Buttons
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: fa8c7edcafcedbcc89c2fb3edad343d9
+    type: action
+    subtype: single
+    trigger: device
+    id: single_left
+  - domain: mqtt
+    device_id: fa8c7edcafcedbcc89c2fb3edad343d9
+    type: action
+    subtype: double
+    trigger: device
+    id: double_left
+  - domain: mqtt
+    device_id: d1bdd28c0ddd3b12e6fde3f1b49f8c0c
+    type: action
+    subtype: single
+    trigger: device
+    id: single_right
+  - domain: mqtt
+    device_id: d1bdd28c0ddd3b12e6fde3f1b49f8c0c
+    type: action
+    subtype: double
+    trigger: device
+    id: double_right
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_left
+        - single_right
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_wall_light
+    - conditions:
+      - condition: trigger
+        id:
+        - double_left
+        - double_right
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_ceiling_light
+  mode: single
+- id: '1729966794081'
+  alias: Loggia Presence
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.loggia_motion_sensor_occupancy
+    to:
+    - 'off'
+    from:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      area_id: loggia
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.fire_tablet_screen
+    enabled: true
+  mode: single
+- id: '1730556526719'
+  alias: Halloween
+  description: Candle Flicker and Lightning
+  triggers:
+  - entity_id:
+    - input_boolean.halloween_show
+    to: 'on'
+    trigger: state
+  - entity_id:
+    - input_boolean.halloween_show
+    to: 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.halloween_show
+        state: 'on'
+      sequence:
+      - repeat:
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness_pct: 100
+              rgb_color:
+              - 255
+              - 0
+              - 0
+            target:
+              entity_id: light.indicator_lights
+          - delay:
+              seconds: '{{ range(30, 60) | random }}'
+            enabled: true
+          - repeat:
+              count: '{{ [3, 5, 7] | random }}'
+              sequence:
+              - action: light.turn_on
+                data:
+                  transition: 0
+                  brightness: '{{ range(100, 255) | random }}'
+                  rgb_color:
+                  - 255
+                  - 0
+                  - 0
+                target:
+                  entity_id: light.indicator_lights
+              - delay:
+                  milliseconds: '{{ range(250, 1000) | random }}'
+              - action: light.turn_on
+                data:
+                  transition: 0
+                  brightness: '{{ range(100, 255) | random }}'
+                  rgb_color:
+                  - 255
+                  - 0
+                  - 0
+                target:
+                  entity_id: light.indicator_lights
+              - delay:
+                  milliseconds: '{{ range(250, 1000) | random }}'
+          - action: light.turn_on
+            data:
+              brightness_pct: 100
+              rgb_color:
+              - 255
+              - 0
+              - 0
+            target:
+              entity_id: light.indicator_lights
+          while:
+          - condition: state
+            entity_id: input_boolean.halloween_show
+            state: 'on'
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.halloween_show
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          brightness_pct: 100
+        target:
+          entity_id: light.indicator_lights
+  mode: restart
+- id: '1730657382332'
+  alias: Bathroom Motion Light
+  description: ''
+  triggers:
+  - entity_id: []
+    from:
+    - 'off'
+    to:
+    - 'on'
+    trigger: state
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  - condition: time
+    after: input_datetime.evening_time
+    before: input_datetime.wake_time
+  actions:
+  - action: switch.turn_on
+    data: {}
+  - wait_for_trigger:
+    - entity_id: []
+      from:
+      - 'on'
+      to:
+      - 'off'
+      trigger: state
+  - delay: 120
+  - action: switch.turn_off
+    data: {}
+  mode: restart
+  max_exceeded: silent
+- id: '1733903999341'
+  alias: Bedroom CO2
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.bedroom_co2
+    trigger: state
+    id: co2
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+    id: brightness
+  conditions:
+  - condition: time
+    before: input_datetime.evening_time
+    after: input_datetime.wake_time
+    enabled: true
+  - condition: state
+    entity_id: light.bedroom_corner_light
+    state:
+    - 'on'
+    enabled: false
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        after: input_datetime.wake_time
+        before: input_datetime.good_night
+      sequence:
+      - data:
+          transition: 60
+          brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+          hs_color:
+          - '{{((states(''sensor.bedroom_co2'') | float * -3 + 6000) / 25) % 360}}'
+          - 100
+        enabled: true
+        action: light.turn_on
+        target:
+          entity_id: light.bedroom_indicator_light
+  mode: single
+- id: '1734291768019'
+  alias: Weather
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.openweathermap_temperature
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_8
+    data:
+      message: weather
+      data:
+        value: '{{states(''sensor.openweathermap_temperature'')|round(0)}}°C'
+        weather: '{% set dict = { ''cloudy'': 3, ''fog'':9, ''rainy'':6, ''clear-night'':
+          1, ''snowy-rainy'': 8, ''partlycloudly'': 3, ''sunny'': 1, ''pouring'':
+          5, ''hail'': 6, ''windy'': 1, ''lightning'': 5 } %} {% set my_weather =
+          states(''sensor.openweathermap_condition'') %} {{dict[my_weather]}}
+
+          '
+    enabled: false
+  mode: single
+- id: '1735554624289'
+  alias: Loggia CO2
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.loggia_co2
+    trigger: state
+  - entity_id:
+    - input_number.brightness
+    trigger: state
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+    enabled: false
+  - condition: state
+    entity_id: cover.living_room_blind
+    state:
+    - open
+  actions:
+  - data:
+      transition: 60
+      brightness_pct: '{{ states(''input_number.brightness'') | int}}'
+      hs_color:
+      - '{{((states(''sensor.loggia_co2'') | float * -3 + 6000) / 25) % 360}}'
+      - 100
+    enabled: true
+    action: light.turn_on
+    target:
+      entity_id: light.loggia_indicator_light
+  mode: single
+- id: '1740560750672'
+  alias: Living Room Switch
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: single_left
+    trigger: device
+    id: single_main_left
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: single_right
+    trigger: device
+    id: single_main_right
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: double_left
+    id: double_main_left
+    trigger: device
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: double_right
+    trigger: device
+    id: double_main_right
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: single_both
+    trigger: device
+    id: single_main_both
+  - domain: mqtt
+    device_id: b9fc6486f3f8bf522eaa08d06766476f
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_main_right
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: single_left
+    trigger: device
+    id: single_secondary_left
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: single_right
+    trigger: device
+    id: single_secondary_right
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: double_left
+    trigger: device
+    id: double_secondary_left
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: double_right
+    trigger: device
+    id: double_secondary_right
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: double_both
+    trigger: device
+    id: double_secondary_right
+  - domain: mqtt
+    device_id: 134a9d465af13d096cac57360ffa8c6c
+    type: action
+    subtype: single_both
+    trigger: device
+    id: single_secondary_both
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: 02:00:00
+    enabled: false
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_main_left
+        - single_secondary_left
+      sequence:
+      - metadata: {}
+        data: {}
+        action: light.toggle
+        target:
+          entity_id: light.living_room_ceiling_light
+    - conditions:
+      - condition: trigger
+        id:
+        - single_main_right
+        - single_secondary_right
+      sequence:
+      - type: toggle
+        device_id: 9ecd11f706cbaf2352e7210392c4bd61
+        entity_id: 9f2fccf0df22ee1b510eda0e029b49b6
+        domain: light
+    - conditions:
+      - condition: trigger
+        id:
+        - double_main_left
+        - double_secondary_left
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.living_room_ceiling_light
+    - conditions:
+      - condition: trigger
+        id:
+        - double_main_right
+        - double_secondary_right
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.living_room_table_light
+        data:
+          brightness_pct: 100
+    - conditions:
+      - condition: trigger
+        id:
+        - single_main_both
+        - single_secondary_both
+      sequence: []
+    - conditions: []
+      sequence: []
+  mode: parallel
+  max: 10
+- id: '1744998946879'
+  alias: Living Room Sofa Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 772b3fa8adadd29471dfbbbe6636c6cc
+    type: action
+    subtype: single
+    trigger: device
+    id: single
+  - domain: mqtt
+    device_id: 772b3fa8adadd29471dfbbbe6636c6cc
+    type: action
+    subtype: double
+    trigger: device
+    id: double
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_backlight
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - double
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id:
+          - light.living_room_ceiling_light
+        data: {}
+  mode: single
+- id: '1748537950922'
+  alias: Living Room Blind Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: a3fbe3a3ff02fa01a73c6d5a4c2684e4
+    type: action
+    subtype: stop
+    trigger: device
+    id: main_stop
+  - domain: mqtt
+    device_id: a3fbe3a3ff02fa01a73c6d5a4c2684e4
+    type: action
+    subtype: open
+    trigger: device
+    id: main_open
+  - domain: mqtt
+    device_id: a3fbe3a3ff02fa01a73c6d5a4c2684e4
+    type: action
+    subtype: close
+    trigger: device
+    id: main_close
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - main_open
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.living_room_blind
+        enabled: false
+      - action: cover.set_cover_position
+        metadata: {}
+        target:
+          entity_id: cover.living_room_blind
+        data:
+          position: 100
+      - delay:
+          hours: 0
+          minutes: 5
+          seconds: 0
+          milliseconds: 0
+        enabled: false
+    - conditions:
+      - condition: trigger
+        id:
+        - main_close
+      sequence:
+      - action: script.close_blinds_safely
+        metadata: {}
+        data: {}
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.living_room_indicator_light
+    - conditions:
+      - condition: trigger
+        id:
+        - main_stop
+      sequence:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.living_room_blind
+  mode: restart
+- id: '1754993056903'
+  alias: Kitchen Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 7041eaf681560fa32041a0489888d7e4
+    type: action
+    subtype: single
+    trigger: device
+    id: single
+  - domain: mqtt
+    device_id: 7041eaf681560fa32041a0489888d7e4
+    type: action
+    subtype: double
+    trigger: device
+    id: double
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: light.kitchen_sink_light
+            state:
+            - 'on'
+          - condition: state
+            entity_id: light.kitchen_stove_light
+            state:
+            - 'on'
+          sequence:
+          - action: light.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id:
+              - light.kitchen_sink_light
+              - light.kitchen_stove_light
+        default:
+        - action: light.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id:
+            - light.kitchen_sink_light
+            - light.kitchen_stove_light
+    - conditions:
+      - condition: trigger
+        id:
+        - double
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.kitchen_ceiling_light_white
+  mode: single
+- id: '1755199977794'
+  alias: 'Self Diagnosis '
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: '14'
+  conditions: []
+  actions:
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: sensor.loggia_desk_sensor_carbon_dioxide
+        state: unavailable
+      - condition: state
+        entity_id: sensor.plant_aglaonema_moisture
+        state: unavailable
+    then:
+    - action: script.1662825053499
+      metadata: {}
+      data:
+        title: Bluetooth Unavailable
+        body: Bluetooth Unavailable
+  - if:
+    - condition: template
+      value_template: "{% set timestamp_str = state_attr('sensor.warmwatermeter_total',
+        'timestamp') %} \n{{ (now() - as_datetime(timestamp_str)) > timedelta(hours=24)
+        }}\n"
+    then:
+    - action: script.1662825053499
+      metadata: {}
+      data:
+        body: Last update {{state_attr('sensor.warmwatermeter_total','timestamp')}}
+        title: CUL Unavailable
+  mode: single
+- id: '1761303010022'
+  alias: Rain
+  description: ''
+  triggers:
+  - hours: /2
+    trigger: time_pattern
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.evening_time
+  actions:
+  - data:
+      type: hourly
+    response_variable: hourly_forecast
+    action: weather.get_forecasts
+    target:
+      entity_id: weather.openweathermap
+  - variables:
+      rain_times: "{% set forecast_list = hourly_forecast['weather.openweathermap'].forecast
+        %} {% set next_8_hours = forecast_list[:8] %} {% set times = namespace(list=[])
+        %} {% for hour in next_8_hours %}\n  {% if 'rainy' in hour.condition or 'pouring'
+        in hour.condition %}\n    {% set times.list = times.list + [as_timestamp(hour.datetime)
+        | timestamp_custom('%-I %p')] %}\n  {% endif %}\n{% endfor %} {{ times.list
+        | unique | join(', ') }}\n"
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ rain_times | length > 0 }}'
+      sequence:
+      - action: script.1662825053499
+        metadata: {}
+        data:
+          body: 'Expect rain at: {{ rain_times }}'
+          title: Rain Alert
+- id: '1764340621999'
+  alias: Washer ready
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.washer_wash_completed
+    from:
+    - 'off'
+    trigger: state
+    to:
+    - 'on'
+  conditions:
+  - condition: time
+    after: input_datetime.wake_time
+    before: input_datetime.good_night
+    enabled: true
+  actions:
+  - data:
+      volume_level: 0.21
+    target:
+      device_id:
+      - 425bd8bb1e56ccab020b317b469d04a4
+    action: media_player.volume_set
+  - data:
+      cache: false
+      entity_id: media_player.pixel_tablet
+      message: Washer is ready
+    action: tts.google_translate_say
+  - target:
+      entity_id: input_text.matrix_text
+    data:
+      value: ' '
+    action: input_text.set_value
+  mode: single
+- id: '1766832590015'
+  alias: Netatmo Polling
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    minutes: /5
+  conditions: []
+  actions:
+  - action: homeassistant.reload_config_entry
+    target:
+      device_id:
+      - d74c0e2bd353a7412a7f7652dd25f590
+      - 57cf8097e635bd087d4c222ac76ab704
+    data: {}
+    enabled: true
+  - action: homeassistant.update_entity
+    metadata: {}
+    data:
+      entity_id:
+      - sensor.bedroom_netatmo_carbon_dioxide
+      - sensor.living_room_netatmo_carbon_dioxide
+    enabled: false
+  mode: single
+- id: '1770905544095'
+  alias: Bedroom Nursery Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 5b2ca50c8142d3f58a2c24c3ccf6dd7f
+    type: action
+    subtype: single
+    trigger: device
+    id: single
+  - domain: mqtt
+    device_id: 5b2ca50c8142d3f58a2c24c3ccf6dd7f
+    type: action
+    subtype: double
+    trigger: device
+    id: double
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_wall_light
+    - conditions:
+      - condition: trigger
+        id:
+        - double
+      sequence:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.bedroom_nursery_light
+        data: {}
+  mode: single
+- id: '1771866639550'
+  alias: IKEA Remote - Controller
+  description: ''
+  use_blueprint:
+    path: EPMatt/ikea_e2001_e2002.yaml
+    input:
+      integration: Zigbee2MQTT
+      controller_device: f5fbe146038c25451d5278a76c2e616f
+      helper_last_controller_event: input_text.ikea_remote
+- id: '1771866932539'
+  alias: IKEA Remote - Hook
+  description: ''
+  use_blueprint:
+    path: EPMatt/light.yaml
+    input:
+      controller_device: f5fbe146038c25451d5278a76c2e616f
+      controller_model: IKEA E2001/E2002 STYRBAR Remote control
+      light: light.living_room_table_light
+      light_transition: 0
+- id: '1773878982858'
+  alias: 'Notify: Zigbee Device Offline'
+  description: ''
+  triggers:
+  - trigger: mqtt
+    options:
+      topic: zigbee2mqtt/+/availability
+      payload: '{"state":"offline"}'
+  actions:
+  - action: script.1662825053499
+    data:
+      body: The device {{ trigger.topic.split('/')[1] }} has gone offline.
+      title: ZigBee device offline
+  mode: parallel
+- id: '1776334561651'
+  alias: Bedroom Nursery Presence
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bedroom_motion_sensor_occupancy
+    to:
+    - 'off'
+    from:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    enabled: true
+    target:
+      entity_id: switch.bedroom_heater
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.bedroom_changing_light
+    data:
+      transition: 60
+  mode: single
+- id: '1776535925574'
+  alias: 'Living Room GrowCube Plant Watering '
+  description: Waters channels A-D in parallel at 8 PM if moisture is low, capped
+    at 10 repeats.
+  triggers:
+  - at: '19:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.growcube_problem
+    state:
+    - 'off'
+  actions:
+  - parallel:
+    - if:
+      - condition: template
+        value_template: '{{ states(''sensor.growcube_c71437_moisture_a'') | float(0)
+          < threshold_start }}'
+      then:
+      - repeat:
+          sequence:
+          - action: growcube.water_plant
+            data:
+              duration: '{{ water_duration }}'
+              device_id: 839993b25431f678c499a03189f26af9
+              channel: A
+          - delay: '{{ rest_interval }}'
+          until:
+          - condition: or
+            conditions:
+            - condition: template
+              value_template: '{{ states(''sensor.growcube_c71437_moisture_a'') |
+                float(0) > threshold_stop }}'
+            - condition: template
+              value_template: '{{ repeat.index >= max_repeats }}'
+      enabled: true
+    - if:
+      - condition: template
+        value_template: '{{ states(''sensor.growcube_c71437_moisture_b'') | float(0)
+          <= threshold_start }}'
+      then:
+      - repeat:
+          sequence:
+          - action: growcube.water_plant
+            data:
+              duration: '{{ water_duration }}'
+              device_id: 839993b25431f678c499a03189f26af9
+              channel: B
+          - delay: '{{ rest_interval }}'
+          until:
+          - condition: or
+            conditions:
+            - condition: template
+              value_template: '{{ states(''sensor.growcube_c71437_moisture_b'') |
+                float(0) > threshold_stop }}'
+            - condition: template
+              value_template: '{{ repeat.index >= max_repeats }}'
+    - if:
+      - condition: template
+        value_template: '{{ states(''sensor.growcube_c71437_moisture_c'') | float(0)
+          <= threshold_start }}'
+      then:
+      - repeat:
+          sequence:
+          - action: growcube.water_plant
+            data:
+              duration: '{{ water_duration }}'
+              device_id: 839993b25431f678c499a03189f26af9
+              channel: C
+          - delay: '{{ rest_interval }}'
+          until:
+          - condition: or
+            conditions:
+            - condition: template
+              value_template: '{{ states(''sensor.growcube_c71437_moisture_c'') |
+                float(0) > threshold_stop }}'
+            - condition: template
+              value_template: '{{ repeat.index >= max_repeats }}'
+    - if:
+      - condition: template
+        value_template: '{{ states(''sensor.growcube_c71437_moisture_d'') | float(0)
+          <= threshold_start }}'
+      then:
+      - repeat:
+          sequence:
+          - action: growcube.water_plant
+            data:
+              duration: '{{ water_duration }}'
+              device_id: 839993b25431f678c499a03189f26af9
+              channel: D
+          - delay: '{{ rest_interval }}'
+          until:
+          - condition: or
+            conditions:
+            - condition: template
+              value_template: '{{ states(''sensor.growcube_c71437_moisture_d'') |
+                float(0) > threshold_stop }}'
+            - condition: template
+              value_template: '{{ repeat.index >= max_repeats }}'
+  variables:
+    threshold_start: 1
+    threshold_stop: 25
+    water_duration: 5
+    rest_interval: 60
+    max_repeats: 20
+  mode: single
+- id: '1776537845632'
+  alias: GrowCube Problem
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.growcube_problem
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - action: script.1662825053499
+    metadata: {}
+    data:
+      body: GrowCube Problem
+      title: GrowCube Problem
+  mode: single
+- id: '1785104479279'
+  alias: 'Bedroom Remote '
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 57d250513a8061380c537dfb6cd422dc
+    type: action
+    subtype: 'on'
+    trigger: device
+    id: 'on'
+  - domain: mqtt
+    device_id: 57d250513a8061380c537dfb6cd422dc
+    type: action
+    subtype: 'off'
+    trigger: device
+    id: 'off'
+  - domain: mqtt
+    device_id: 57d250513a8061380c537dfb6cd422dc
+    type: action
+    subtype: brightness_move_up
+    trigger: device
+    id: up
+  - domain: mqtt
+    device_id: 57d250513a8061380c537dfb6cd422dc
+    type: action
+    subtype: brightness_move_down
+    trigger: device
+    id: 'down '
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - 'on'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.bedroom_wall_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - 'off'
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.bedroom_wall_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - up
+      sequence: []
+    - conditions:
+      - condition: trigger
+        id:
+        - 'down '
+      sequence: []
+  mode: single
+- id: '1785621141215'
+  alias: Loggia Convection Heater VTherm
+  description: ''
+  triggers:
+  - value_template: '{# Target temperature is higher than current (considering hysteresis)
+      #} {{ state_attr(''climate.loggia_thermostat'', ''temperature'') | float - states("sensor.loggia_temperature")
+      | float > states(''input_number.temperature_hysteresis'') | float}}'
+    id: high_target
+    trigger: template
+    alias: Target temperature is higher than actual
+  - value_template: '{# Target temperature is lower than current (considering hysteresis)
+      #} {{ state_attr(''climate.loggia_thermostat'', ''temperature'') | float - states("sensor.loggia_temperature")
+      | float < states(''input_number.temperature_hysteresis'') | float}}'
+    id: lower_target
+    trigger: template
+    alias: Target temperature is lower than actual
+  - trigger: light.turned_off
+    target:
+      entity_id: light.loggia_monitor_light
+    options: {}
+    id: light_off
+    enabled: false
+  - trigger: light.turned_on
+    target:
+      entity_id: light.loggia_monitor_light
+    options: {}
+    id: light_on
+    enabled: false
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+      - condition: state
+        entity_id: binary_sensor.loggia_window_contact
+        state: 'off'
+        enabled: true
+      - condition: template
+        value_template: '{# Target temperature is higher than current (considering
+          hysteresis) #} {{ state_attr(''climate.loggia_thermostat'', ''temperature'')
+          | float - states("sensor.loggia_temperature") | float > states(''input_number.temperature_hysteresis'')
+          | float}}'
+        alias: Target temperature is higher than actual
+      - condition: state
+        entity_id: light.loggia_monitor_light
+        state: 'on'
+      sequence:
+      - delay:
+          hours: 0
+          minutes: 2
+          seconds: 0
+          milliseconds: 0
+      - data: {}
+        action: switch.turn_on
+        target:
+          entity_id: switch.loggia_heater
+      alias: Heat
+    - conditions:
+      - condition: trigger
+        id:
+        - lower_target
+        - open_window
+        - light_off
+      sequence:
+      - data: {}
+        action: switch.turn_off
+        target:
+          entity_id: switch.loggia_heater
+      alias: 'Off'
+  mode: restart
+- id: '1792360902192'
+  alias: Bedroom Blind Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 055f35413d39128e097217b927f22981
+    type: action
+    subtype: stop
+    trigger: device
+    id: main_stop
+  - domain: mqtt
+    device_id: 055f35413d39128e097217b927f22981
+    type: action
+    subtype: open
+    trigger: device
+    id: main_open
+  - domain: mqtt
+    device_id: 055f35413d39128e097217b927f22981
+    type: action
+    subtype: close
+    trigger: device
+    id: main_close
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - main_open
+      sequence:
+      - action: fan.turn_off
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data: {}
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.bedroom_wall_light
+        data: {}
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.living_room_blind
+        enabled: false
+      - action: cover.set_cover_position
+        metadata: {}
+        target:
+          entity_id: cover.living_room_blind
+        data:
+          position: 100
+        enabled: false
+      - delay:
+          hours: 0
+          minutes: 5
+          seconds: 0
+          milliseconds: 0
+        enabled: false
+    - conditions:
+      - condition: trigger
+        id:
+        - main_close
+      sequence:
+      - action: script.close_blinds_safely
+        metadata: {}
+        data: {}
+        enabled: false
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.living_room_indicator_light
+        enabled: false
+      - action: light.turn_off
+        metadata: {}
+        target:
+          area_id: bedroom
+        data: {}
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.bedroom_wall_light
+        data:
+          brightness_pct: 10
+      - condition: time
+        after: input_datetime.evening_time
+      - action: fan.turn_on
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data: {}
+      - action: fan.set_preset_mode
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data:
+          preset_mode: Turbo
+    - conditions:
+      - condition: trigger
+        id:
+        - main_stop
+      sequence:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.living_room_blind
+        enabled: false
+  mode: restart
+- id: '1793657654142'
+  alias: Bathroom Climate Sync
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: climate.bathroom_thermostat
+    id: climate_state
+  - trigger: state
+    entity_id: climate.bathroom_climate_sensor
+    id: w100_climate_state
+  - trigger: state
+    entity_id: sensor.outdoor_temperature
+    id: ext_temp
+    enabled: true
+  - trigger: state
+    entity_id: sensor.outdoor_humidity
+    id: ext_hum
+    enabled: true
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(main_thermostat) != states(aqara_w100) }}'
+        - condition: template
+          value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+        then:
+        - action: climate.set_hvac_mode
+          target:
+            entity_id: climate.bathroom_climate_sensor
+          data:
+            hvac_mode: '{{ states(main_thermostat) }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          target:
+            entity_id: climate.bathroom_climate_sensor
+          data:
+            temperature: '{{ state_attr(main_thermostat, "temperature") }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize the source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.bathroom_climate_sensor
+          data:
+            fan_mode: "{% set source = state_attr(main_thermostat, \"fan_mode\") %}\n{#
+              If source is med/medium, pass \"medium\" to the Aqara #}\n{% if source
+              | lower == 'med' or source | lower == 'medium' %}\n  medium\n{# Otherwise
+              just pass the source through #}\n{% else %}\n  {{ source }}\n{% endif
+              %}\n"
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - w100_climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: "{{\n  (states(main_thermostat) != states(aqara_w100)) and\n
+            \ (\n    (is_state(aqara_w100, 'heat') and (hvac_has_heat | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'cool') and (hvac_has_cool | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'auto') and (hvac_has_auto | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'off'))\n  )\n}}\n"
+        then:
+        - action: climate.set_hvac_mode
+          data:
+            hvac_mode: '{{ states(aqara_w100) }}
+
+              '
+          target:
+            entity_id: climate.bathroom_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+        else:
+        - if:
+          - condition: template
+            value_template: "{{\n  (is_state(aqara_w100, 'heat') and not (hvac_has_heat
+              | default(false) | bool)) or\n  (is_state(aqara_w100, 'cool') and not
+              (hvac_has_cool | default(false) | bool)) or\n  (is_state(aqara_w100,
+              'auto') and not (hvac_has_auto | default(false) | bool))\n}}\n"
+          then:
+          - action: climate.set_hvac_mode
+            metadata: {}
+            data:
+              hvac_mode: heat
+            target:
+              entity_id: climate.bathroom_climate_sensor
+          - delay:
+              seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          data:
+            temperature: '{{ state_attr(aqara_w100, "temperature") }}
+
+              '
+          target:
+            entity_id: climate.bathroom_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.bathroom_thermostat
+          data:
+            fan_mode: "{% set source = state_attr(aqara_w100, \"fan_mode\") %}\n{%
+              set target_valid_list = state_attr(main_thermostat, \"fan_modes\") %}\n\n{#
+              If source is med/medium, find the target's specific medium mode #}\n{%
+              if source | lower == 'med' or source | lower == 'medium' %}\n  {{ target_valid_list
+              | select('search', '(?i)^med') | first | default(source) }}\n  \n{#
+              Otherwise just pass the source through #}\n{% else %}\n  {{ source }}\n{%
+              endif %}\n"
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - ext_temp
+        - ext_hum
+      - condition: template
+        value_template: '{{ enable_external_data }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(external_temperature_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_temperature''
+              }}'
+          data:
+            value: '{{ states(external_temperature_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ states(external_humidity_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_humidity''
+              }}'
+          data:
+            value: '{{ states(external_humidity_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+  variables:
+    main_thermostat: climate.bathroom_thermostat
+    aqara_w100: climate.bathroom_climate_sensor
+    hvac_has_heat: true
+    hvac_has_cool: false
+    hvac_has_auto: false
+    hvac_has_vent: false
+    sync_delay: 2
+    enable_external_data: true
+    external_temperature_sensor: sensor.outdoor_temperature
+    external_humidity_sensor: sensor.outdoor_humidity
+    thermostat_mode_switch: '{{ ''switch.'' ~ aqara_w100.split(''.'')[1] ~ ''_thermostat_mode''
+      }}'
+  mode: queued
+  max: 10
+- id: '1794084125528'
+  alias: Kitchen Climate Sync
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: climate.kitchen_thermostat
+    id: climate_state
+  - trigger: state
+    entity_id: climate.kitchen_climate_sensor
+    id: w100_climate_state
+  - trigger: state
+    entity_id: sensor.outdoor_temperature
+    id: ext_temp
+    enabled: true
+  - trigger: state
+    entity_id: sensor.outdoor_humidity
+    id: ext_hum
+    enabled: true
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(main_thermostat) != states(aqara_w100) }}'
+        - condition: template
+          value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+        then:
+        - action: climate.set_hvac_mode
+          target:
+            entity_id: climate.kitchen_climate_sensor
+          data:
+            hvac_mode: '{{ states(main_thermostat) }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          target:
+            entity_id: climate.kitchen_climate_sensor
+          data:
+            temperature: '{{ state_attr(main_thermostat, "temperature") }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize the source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.kitchen_climate_sensor
+          data:
+            fan_mode: "{% set source = state_attr(main_thermostat, \"fan_mode\") %}\n{#
+              If source is med/medium, pass \"medium\" to the Aqara #}\n{% if source
+              | lower == 'med' or source | lower == 'medium' %}\n  medium\n{# Otherwise
+              just pass the source through #}\n{% else %}\n  {{ source }}\n{% endif
+              %}\n"
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - w100_climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: "{{\n  (states(main_thermostat) != states(aqara_w100)) and\n
+            \ (\n    (is_state(aqara_w100, 'heat') and (hvac_has_heat | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'cool') and (hvac_has_cool | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'auto') and (hvac_has_auto | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'off'))\n  )\n}}\n"
+        then:
+        - action: climate.set_hvac_mode
+          data:
+            hvac_mode: '{{ states(aqara_w100) }}
+
+              '
+          target:
+            entity_id: climate.kitchen_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+        else:
+        - if:
+          - condition: template
+            value_template: "{{\n  (is_state(aqara_w100, 'heat') and not (hvac_has_heat
+              | default(false) | bool)) or\n  (is_state(aqara_w100, 'cool') and not
+              (hvac_has_cool | default(false) | bool)) or\n  (is_state(aqara_w100,
+              'auto') and not (hvac_has_auto | default(false) | bool))\n}}\n"
+          then:
+          - action: climate.set_hvac_mode
+            metadata: {}
+            data:
+              hvac_mode: heat
+            target:
+              entity_id: climate.kitchen_climate_sensor
+          - delay:
+              seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          data:
+            temperature: '{{ state_attr(aqara_w100, "temperature") }}
+
+              '
+          target:
+            entity_id: climate.kitchen_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.kitchen_thermostat
+          data:
+            fan_mode: "{% set source = state_attr(aqara_w100, \"fan_mode\") %}\n{%
+              set target_valid_list = state_attr(main_thermostat, \"fan_modes\") %}\n\n{#
+              If source is med/medium, find the target's specific medium mode #}\n{%
+              if source | lower == 'med' or source | lower == 'medium' %}\n  {{ target_valid_list
+              | select('search', '(?i)^med') | first | default(source) }}\n  \n{#
+              Otherwise just pass the source through #}\n{% else %}\n  {{ source }}\n{%
+              endif %}\n"
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - ext_temp
+        - ext_hum
+      - condition: template
+        value_template: '{{ enable_external_data }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(external_temperature_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_temperature''
+              }}'
+          data:
+            value: '{{ states(external_temperature_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ states(external_humidity_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_humidity''
+              }}'
+          data:
+            value: '{{ states(external_humidity_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+  variables:
+    main_thermostat: climate.kitchen_thermostat
+    aqara_w100: climate.kitchen_climate_sensor
+    hvac_has_heat: true
+    hvac_has_cool: false
+    hvac_has_auto: false
+    hvac_has_vent: false
+    sync_delay: 2
+    enable_external_data: true
+    external_temperature_sensor: sensor.outdoor_temperature
+    external_humidity_sensor: sensor.outdoor_humidity
+    thermostat_mode_switch: '{{ ''switch.'' ~ aqara_w100.split(''.'')[1] ~ ''_thermostat_mode''
+      }}'
+  mode: queued
+  max: 10
+- id: '1794084233277'
+  alias: Living Room Climate Sync
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: climate.living_room_thermostat
+    id: climate_state
+  - trigger: state
+    entity_id: climate.living_room_climate_sensor
+    id: w100_climate_state
+  - trigger: state
+    entity_id: sensor.outdoor_temperature
+    id: ext_temp
+    enabled: true
+  - trigger: state
+    entity_id: sensor.outdoor_humidity
+    id: ext_hum
+    enabled: true
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(main_thermostat) != states(aqara_w100) }}'
+        - condition: template
+          value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+        then:
+        - action: climate.set_hvac_mode
+          target:
+            entity_id: climate.living_room_climate_sensor
+          data:
+            hvac_mode: '{{ states(main_thermostat) }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          target:
+            entity_id: climate.living_room_climate_sensor
+          data:
+            temperature: '{{ state_attr(main_thermostat, "temperature") }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize the source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.living_room_climate_sensor
+          data:
+            fan_mode: "{% set source = state_attr(main_thermostat, \"fan_mode\") %}\n{#
+              If source is med/medium, pass \"medium\" to the Aqara #}\n{% if source
+              | lower == 'med' or source | lower == 'medium' %}\n  medium\n{# Otherwise
+              just pass the source through #}\n{% else %}\n  {{ source }}\n{% endif
+              %}\n"
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - w100_climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: "{{\n  (states(main_thermostat) != states(aqara_w100)) and\n
+            \ (\n    (is_state(aqara_w100, 'heat') and (hvac_has_heat | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'cool') and (hvac_has_cool | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'auto') and (hvac_has_auto | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'off'))\n  )\n}}\n"
+        then:
+        - action: climate.set_hvac_mode
+          data:
+            hvac_mode: '{{ states(aqara_w100) }}
+
+              '
+          target:
+            entity_id: climate.living_room_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+        else:
+        - if:
+          - condition: template
+            value_template: "{{\n  (is_state(aqara_w100, 'heat') and not (hvac_has_heat
+              | default(false) | bool)) or\n  (is_state(aqara_w100, 'cool') and not
+              (hvac_has_cool | default(false) | bool)) or\n  (is_state(aqara_w100,
+              'auto') and not (hvac_has_auto | default(false) | bool))\n}}\n"
+          then:
+          - action: climate.set_hvac_mode
+            metadata: {}
+            data:
+              hvac_mode: heat
+            target:
+              entity_id: climate.living_room_climate_sensor
+          - delay:
+              seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          data:
+            temperature: '{{ state_attr(aqara_w100, "temperature") }}
+
+              '
+          target:
+            entity_id: climate.living_room_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.living_room_thermostat
+          data:
+            fan_mode: "{% set source = state_attr(aqara_w100, \"fan_mode\") %}\n{%
+              set target_valid_list = state_attr(main_thermostat, \"fan_modes\") %}\n\n{#
+              If source is med/medium, find the target's specific medium mode #}\n{%
+              if source | lower == 'med' or source | lower == 'medium' %}\n  {{ target_valid_list
+              | select('search', '(?i)^med') | first | default(source) }}\n  \n{#
+              Otherwise just pass the source through #}\n{% else %}\n  {{ source }}\n{%
+              endif %}\n"
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - ext_temp
+        - ext_hum
+      - condition: template
+        value_template: '{{ enable_external_data }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(external_temperature_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_temperature''
+              }}'
+          data:
+            value: '{{ states(external_temperature_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ states(external_humidity_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_humidity''
+              }}'
+          data:
+            value: '{{ states(external_humidity_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+  variables:
+    main_thermostat: climate.living_room_thermostat
+    aqara_w100: climate.living_room_climate_sensor
+    hvac_has_heat: true
+    hvac_has_cool: false
+    hvac_has_auto: false
+    hvac_has_vent: false
+    sync_delay: 2
+    enable_external_data: true
+    external_temperature_sensor: sensor.outdoor_temperature
+    external_humidity_sensor: sensor.outdoor_humidity
+    thermostat_mode_switch: '{{ ''switch.'' ~ aqara_w100.split(''.'')[1] ~ ''_thermostat_mode''
+      }}'
+  mode: queued
+  max: 10
+- id: '1794084319108'
+  alias: Bedroom Climate Sync
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: climate.bedroom_thermostat
+    id: climate_state
+  - trigger: state
+    entity_id: climate.bedroom_climate_sensor
+    id: w100_climate_state
+  - trigger: state
+    entity_id: sensor.outdoor_temperature
+    id: ext_temp
+    enabled: true
+  - trigger: state
+    entity_id: sensor.outdoor_humidity
+    id: ext_hum
+    enabled: true
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(main_thermostat) != states(aqara_w100) }}'
+        - condition: template
+          value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+        then:
+        - action: climate.set_hvac_mode
+          target:
+            entity_id: climate.bedroom_climate_sensor
+          data:
+            hvac_mode: '{{ states(main_thermostat) }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          target:
+            entity_id: climate.bedroom_climate_sensor
+          data:
+            temperature: '{{ state_attr(main_thermostat, "temperature") }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize the source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.bedroom_climate_sensor
+          data:
+            fan_mode: "{% set source = state_attr(main_thermostat, \"fan_mode\") %}\n{#
+              If source is med/medium, pass \"medium\" to the Aqara #}\n{% if source
+              | lower == 'med' or source | lower == 'medium' %}\n  medium\n{# Otherwise
+              just pass the source through #}\n{% else %}\n  {{ source }}\n{% endif
+              %}\n"
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - w100_climate_state
+      - condition: template
+        value_template: '{{ is_state(thermostat_mode_switch, ''on'') }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: "{{\n  (states(main_thermostat) != states(aqara_w100)) and\n
+            \ (\n    (is_state(aqara_w100, 'heat') and (hvac_has_heat | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'cool') and (hvac_has_cool | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'auto') and (hvac_has_auto | default(false)
+            | bool)) or\n    (is_state(aqara_w100, 'off'))\n  )\n}}\n"
+        then:
+        - action: climate.set_hvac_mode
+          data:
+            hvac_mode: '{{ states(aqara_w100) }}
+
+              '
+          target:
+            entity_id: climate.bedroom_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+        else:
+        - if:
+          - condition: template
+            value_template: "{{\n  (is_state(aqara_w100, 'heat') and not (hvac_has_heat
+              | default(false) | bool)) or\n  (is_state(aqara_w100, 'cool') and not
+              (hvac_has_cool | default(false) | bool)) or\n  (is_state(aqara_w100,
+              'auto') and not (hvac_has_auto | default(false) | bool))\n}}\n"
+          then:
+          - action: climate.set_hvac_mode
+            metadata: {}
+            data:
+              hvac_mode: heat
+            target:
+              entity_id: climate.bedroom_climate_sensor
+          - delay:
+              seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(main_thermostat, "temperature") != state_attr(aqara_w100,
+            "temperature") }}'
+        then:
+        - action: climate.set_temperature
+          data:
+            temperature: '{{ state_attr(aqara_w100, "temperature") }}
+
+              '
+          target:
+            entity_id: climate.bedroom_thermostat
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: "{# Define the variables#} {% set source = state_attr(main_thermostat,
+            \"fan_mode\") %} {% set target = state_attr(aqara_w100, \"fan_mode\")
+            %} {# Normalize source to lowercase and map med->medium for comparison
+            #} {% set source_norm = 'medium' if source | lower == 'med' else source
+            | lower %} {# Compare normalized values #} {{ \n  (source_norm != target)
+            and \n  (hvac_has_vent | default(false) | bool) \n}}"
+        then:
+        - action: climate.set_fan_mode
+          target:
+            entity_id: climate.bedroom_thermostat
+          data:
+            fan_mode: "{% set source = state_attr(aqara_w100, \"fan_mode\") %}\n{%
+              set target_valid_list = state_attr(main_thermostat, \"fan_modes\") %}\n\n{#
+              If source is med/medium, find the target's specific medium mode #}\n{%
+              if source | lower == 'med' or source | lower == 'medium' %}\n  {{ target_valid_list
+              | select('search', '(?i)^med') | first | default(source) }}\n  \n{#
+              Otherwise just pass the source through #}\n{% else %}\n  {{ source }}\n{%
+              endif %}\n"
+          enabled: false
+        - delay:
+            seconds: '{{ sync_delay }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - ext_temp
+        - ext_hum
+      - condition: template
+        value_template: '{{ enable_external_data }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ states(external_temperature_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_temperature''
+              }}'
+          data:
+            value: '{{ states(external_temperature_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+      - if:
+        - condition: template
+          value_template: '{{ states(external_humidity_sensor) not in [''unknown'',
+            ''unavailable''] }}'
+        then:
+        - action: number.set_value
+          target:
+            entity_id: '{{ ''number.'' ~ aqara_w100.split(''.'')[1] ~ ''_external_humidity''
+              }}'
+          data:
+            value: '{{ states(external_humidity_sensor) | float }}
+
+              '
+        - delay:
+            seconds: '{{ sync_delay }}'
+  variables:
+    main_thermostat: climate.bedroom_thermostat
+    aqara_w100: climate.bedroom_climate_sensor
+    hvac_has_heat: true
+    hvac_has_cool: false
+    hvac_has_auto: false
+    hvac_has_vent: false
+    sync_delay: 2
+    enable_external_data: true
+    external_temperature_sensor: sensor.outdoor_temperature
+    external_humidity_sensor: sensor.outdoor_humidity
+    thermostat_mode_switch: '{{ ''switch.'' ~ aqara_w100.split(''.'')[1] ~ ''_thermostat_mode''
+      }}'
+  mode: queued
+  max: 10
+- id: '1794775576349'
+  alias: TRV Polling
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    minutes: /15
+  conditions: []
+  actions:
+  - action: mqtt.publish
+    data:
+      topic: '{{ "zigbee2mqtt/Kitchen TRV/get" }}'
+      payload: '{"running_state": ""}'
+  - action: mqtt.publish
+    data:
+      topic: '{{ "zigbee2mqtt/Living Room TRV/get" }}'
+      payload: '{"running_state": ""}'
+  - action: mqtt.publish
+    data:
+      topic: '{{ "zigbee2mqtt/Bedroom TRV/get" }}'
+      payload: '{"running_state": ""}'
+  - action: mqtt.publish
+    data:
+      topic: '{{ "zigbee2mqtt/Bathroom TRV/get" }}'
+      payload: '{"running_state": ""}'
+  - action: mqtt.publish
+    data:
+      topic: '{{ "zigbee2mqtt/Loggia TRV/get" }}'
+      payload: '{"running_state": ""}'
+  mode: single

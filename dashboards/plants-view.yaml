@@ -1,0 +1,392 @@
+views:
+  - title: Moisture
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  attributes:
+                    device_class: moisture
+                  options:
+                    type: gauge
+                    max: 3000
+                    severity:
+                      green: 0
+                      yellow: 1000
+                      red: 2000
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 0.05
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: moisture
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: moisture
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: moisture
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 100
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: moisture
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 100
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: moisture
+        column_span: 1
+    max_columns: 4
+  - title: Conductivity
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 1000
+                    severity:
+                      green: 500
+                      yellow: 250
+                      red: 0
+                  domain: sensor
+                  attributes:
+                    device_class: conductivity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: conductivity
+            card:
+              type: history-graph
+              hours_to_show: 6
+              min_y_axis: 0
+              max_y_axis: 1000
+              title: Minutely
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              min_y_axis: 0
+              max_y_axis: 1000
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: conductivity
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 1000
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: conductivity
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 1000
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: conductivity
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 1000
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  attributes:
+                    device_class: conductivity
+        column_span: 1
+    max_columns: 4
+  - title: Illuminance
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  name: Plant*
+                  attributes:
+                    device_class: illuminance
+                  options:
+                    type: gauge
+                    max: 60000
+                    segments:
+                      - from: 0
+                        color: red
+                      - from: 15000
+                        color: yellow
+                      - from: 30000
+                        color: green
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: false
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              min_y_axis: 0
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Plant*
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              title: Daily
+              days_to_show: 30
+              max_y_axis: 8000
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Plant*
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              days_to_show: 365
+              title: Weekly
+              max_y_axis: 8000
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Plant*
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              title: Monthly
+              days_to_show: 730
+              max_y_axis: 8000
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: Plant*
+                  attributes:
+                    device_class: illuminance
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+        column_span: 1
+    max_columns: 4
+  - theme: Backend-selected
+    title: Status
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: plant-status
+            entity: plant.aglaonema
+            name: Aglaonema
+          - type: plant-status
+            entity: plant.epipremnum
+            name: Epipremnum
+          - type: plant-status
+            entity: plant.monstera
+            name: Monstera
+          - type: plant-status
+            entity: plant.pachira
+            name: Pachira

@@ -1,0 +1,384 @@
+views:
+  - title: History
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: custom:auto-entities
+        card:
+          type: grid
+          columns: 1
+          square: false
+        card_param: cards
+        filter:
+          template: >-
+            {% set ns = namespace(cards=[]) %} {% for state in states.climate |
+            selectattr('entity_id', 'search', '_thermostat$') |
+            sort(attribute='name') %}
+              {% set room = state.object_id | replace('_thermostat', '') %}
+              {% set title = room | replace('_', ' ') | title %}
+              {% set trv = 'sensor.' ~ room ~ '_trv_position' %}
+              {% set trv_clim = 'climate.' ~ room ~ '_trv' %}
+              {% set win = 'binary_sensor.' ~ room ~ '_window_contact' %}
+              
+              {% set series = [
+                {
+                  'entity': state.entity_id,
+                  'attribute': 'current_temperature',
+                  'name': 'Current',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'stroke_width': 2
+                },
+                {
+                  'entity': state.entity_id,
+                  'attribute': 'temperature',
+                  'name': 'Target',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'curve': 'stepline',
+                  'stroke_width': 1.5
+                },
+                {
+                  'entity': state.entity_id,
+                  'attribute': 'hvac_action',
+                  'name': 'Heating',
+                  'yaxis_id': 'percent',
+                  'type': 'area',
+                  'curve': 'stepline',
+                  'fill_raw': 'last',
+                  'transform': 'return x === "heating" ? 100 : 0;',
+                  'stroke_width': 0,
+                  'opacity': 0.2,
+                  'color': '#ff6600',
+                  'show': {'legend_value': false}
+                }
+              ] %}
+              
+              {% if states(trv_clim) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': trv_clim,
+                  'attribute': 'temperature',
+                  'name': 'TRV Setpoint',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'curve': 'stepline',
+                  'stroke_width': 1.5,
+                  'color': '#2ecc71',
+                  'fill_raw': 'last'
+                }] %}
+              {% endif %}
+              
+              {% set trv_temp_list = states.sensor | selectattr('entity_id', 'search', room ~ '.*_trv_local_temperature_internal$') | map(attribute='entity_id') | list %}
+              {% set cal_list = states.number | selectattr('entity_id', 'search', room ~ '.*_trv_local_temperature_calibration$') | map(attribute='entity_id') | list %}
+              
+              {% if trv_temp_list | length > 0 %}
+                {% set series = series + [{
+                  'entity': trv_temp_list[0],
+                  'name': 'TRV Internal',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'stroke_width': 1.5,
+                  'stroke_dash': 2,
+                  'color': '#e74c3c',
+                  'fill_raw': 'last'
+                }] %}
+              {% elif states(trv_clim) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': trv_clim,
+                  'attribute': 'current_temperature',
+                  'name': 'TRV Internal',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'stroke_width': 1.5,
+                  'stroke_dash': 2,
+                  'color': '#e74c3c',
+                  'fill_raw': 'last'
+                }] %}
+              {% endif %}
+              
+              {% if states(trv_clim) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': trv_clim,
+                  'attribute': 'current_temperature',
+                  'name': 'TRV Calibrated',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'stroke_width': 1.5,
+                  'stroke_dash': 4,
+                  'color': '#e67e22',
+                  'fill_raw': 'last'
+                }] %}
+              {% elif trv_temp_list | length > 0 and cal_list | length > 0 %}
+                {% set series = series + [{
+                  'entity': trv_temp_list[0],
+                  'name': 'TRV Calibrated',
+                  'yaxis_id': 'temp',
+                  'type': 'line',
+                  'stroke_width': 1.5,
+                  'stroke_dash': 4,
+                  'color': '#e67e22',
+                  'fill_raw': 'last',
+                  'transform': 'return Number(x) + Number(hass.states["' ~ cal_list[0] ~ '"].state);'
+                }] %}
+              {% endif %}
+              
+              {% if states(trv) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': trv,
+                  'name': 'TRV',
+                  'yaxis_id': 'percent',
+                  'type': 'line',
+                  'curve': 'stepline',
+                  'stroke_width': 1,
+                  'opacity': 0.8,
+                  'color': '#9b59b6',
+                  'fill_raw': 'last'
+                }] %}
+              {% endif %}
+              
+              {% if states(win) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': win,
+                  'name': 'Window',
+                  'yaxis_id': 'percent',
+                  'type': 'area',
+                  'curve': 'stepline',
+                  'fill_raw': 'last',
+                  'transform': 'return x === "on" ? 100 : 0;',
+                  'stroke_width': 1,
+                  'stroke_dash': 3,
+                  'opacity': 0.25,
+                  'color': '#00bfff',
+                  'show': {'legend_value': false}
+                }] %}
+              {% endif %}
+              
+              {% set pres_list = states.binary_sensor | selectattr('entity_id', 'search', room ~ '.*_thermostat_presence_state$') | map(attribute='entity_id') | list %}
+              {% if pres_list | length > 0 and states(pres_list[0]) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': pres_list[0],
+                  'name': 'Away',
+                  'yaxis_id': 'percent',
+                  'type': 'area',
+                  'curve': 'stepline',
+                  'fill_raw': 'last',
+                  'transform': 'return (x === "off" || x === "false" || x === false) ? 100 : 0;',
+                  'stroke_width': 0,
+                  'opacity': 0.15,
+                  'color': '#f1c40f',
+                  'show': {'legend_value': false}
+                }] %}
+              {% elif state.attributes.presence_state is defined and state.attributes.presence_state not in ['unavailable', 'unknown', 'none', 'not_configured'] %}
+                {% set series = series + [{
+                  'entity': state.entity_id,
+                  'attribute': 'presence_state',
+                  'name': 'Away',
+                  'yaxis_id': 'percent',
+                  'type': 'area',
+                  'curve': 'stepline',
+                  'fill_raw': 'last',
+                  'transform': 'return (x === "off" || x === "false" || x === false) ? 100 : 0;',
+                  'stroke_width': 0,
+                  'opacity': 0.15,
+                  'color': '#f1c40f',
+                  'show': {'legend_value': false}
+                }] %}
+              {% endif %}
+              
+              {% set mot_list = states.binary_sensor | selectattr('entity_id', 'search', room ~ '.*_thermostat_motion_state$') | map(attribute='entity_id') | list %}
+              {% if mot_list | length > 0 and states(mot_list[0]) not in ['unknown', 'unavailable'] %}
+                {% set series = series + [{
+                  'entity': mot_list[0],
+                  'name': 'Motion',
+                  'yaxis_id': 'percent',
+                  'type': 'area',
+                  'curve': 'stepline',
+                  'fill_raw': 'last',
+                  'transform': 'return (x === "on" || x === "true" || x === true) ? 100 : 0;',
+                  'stroke_width': 0,
+                  'opacity': 0.2,
+                  'color': '#2ecc71',
+                  'show': {'legend_value': false}
+                }] %}
+              {% elif state.attributes.motion_state is defined and state.attributes.motion_state not in ['unavailable', 'unknown', 'none', 'not_configured'] %}
+                {% set series = series + [{
+                  'entity': state.entity_id,
+                  'attribute': 'motion_state',
+                  'name': 'Motion',
+                  'yaxis_id': 'percent',
+                  'type': 'area',
+                  'curve': 'stepline',
+                  'fill_raw': 'last',
+                  'transform': 'return (x === "on" || x === "true" || x === true) ? 100 : 0;',
+                  'stroke_width': 0,
+                  'opacity': 0.2,
+                  'color': '#2ecc71',
+                  'show': {'legend_value': false}
+                }] %}
+              {% endif %}
+              
+              {% set ns.cards = ns.cards + [{
+                'type': 'custom:apexcharts-card',
+                'header': {'show': true, 'title': title},
+                'graph_span': '12h',
+                'yaxis': [
+                  {'id': 'temp', 'opposite': false, 'min': 14, 'max': 24, 'decimals': 1},
+                  {'id': 'percent', 'opposite': true, 'min': 0, 'max': 100, 'decimals': 0}
+                ],
+                'series': series
+              }] %}
+            {% endfor %} {{ ns.cards }}
+    max_columns: 3
+  - title: Valves
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - entity_id: sensor.*_trv_position
+                  options:
+                    type: gauge
+                    max: 3000
+                    severity:
+                      green: 0
+                      yellow: 1000
+                      red: 2000
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 0.05
+              title: Minutely
+            filter:
+              include:
+                - options: {}
+                  entity_id: sensor.*_trv_position
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  entity_id: sensor.*_trv_position
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 30
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  entity_id: sensor.*_trv_position
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 30
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  entity_id: sensor.*_trv_position
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              min_y_axis: 0
+              max_y_axis: 30
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  entity_id: sensor.*_trv_position
+        column_span: 1
+    max_columns: 3
+  - type: sections
+    max_columns: 4
+    title: Schedule
+    path: test
+    sections:
+      - type: grid
+        cards:
+          - type: custom:scheduler-card
+            show_header_toggle: false
+            default_editor: scheme
+            sort_by:
+              - state
+              - relative-time
+            display_options:
+              primary_info: default
+            include:
+              - climate.bathroom_thermostat
+              - climate.bedroom_thermostat
+              - climate.kitchen_thermostat
+              - climate.living_room_thermostat
+              - climate.loggia_thermostat
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: Control
+    path: control2
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - entity_id: climate.*_thermostat
+                  options:
+                    type: thermostat
+                    show_current_as_primary: true
+                    features:
+                      - type: climate-preset-modes
+                        style: dropdown
+            sort:
+              method: friendly_name
+    cards: []

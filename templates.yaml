@@ -1,0 +1,107 @@
+
+  - sensor:
+      - name: "Unavailable Zigbee Devices"
+        unique_id: unavailable_zigbee_devices
+        state_class: measurement
+        icon: mdi:help-network-outline
+        state: >
+          {{ states.sensor
+             | selectattr('entity_id', 'search', '_linkquality$')
+             | selectattr('state', 'in', ['unavailable', 'unknown'])
+             | list | count 
+          }}
+        attributes:
+          device_names: >
+            {{ states.sensor
+               | selectattr('entity_id', 'search', '_linkquality$')
+               | selectattr('state', 'in', ['unavailable', 'unknown'])
+               | map(attribute='name')
+               | map('replace', ' linkquality', '')
+               | list 
+            }}
+  
+      - name: Electricity
+        state: "{{ states('input_number.strom')|float(0) }}"
+        unit_of_measurement: kWh  
+        device_class: energy
+        state_class: total_increasing
+        unique_id: electricity
+
+      - name: Cold Water Consumption
+        state: "{{ states('input_number.cold_water')|float(0) }}"
+        unit_of_measurement: m³  
+        device_class: water
+        state_class: total_increasing
+        unique_id: cold_water
+
+
+      - name: Total Allowlist Energy
+        unique_id: total_allowlist_energy
+        state: "{{ (states.sensor | map(attribute='entity_id') | select('in', label_entities('allowlist')) | select('match', '.*_energy$') | map('states') | select('is_number') | map('float') | sum ) | default(0)}} "
+        unit_of_measurement: kWh  
+        device_class: energy
+        state_class: total_increasing
+        
+      - name: Total Untracked Energy
+        unique_id: total_allowlist_energy
+        state: "{{ states('sensor.electricity')|float - states('sensor.total_allowlist_energy')|float }}"
+        unit_of_measurement: kWh  
+        device_class: energy
+        state_class: total_increasing
+
+      - name: Total Heater Consumption
+        unique_id: total_heater_consumption
+        state: "{{ states('sensor.bathroom_heater_consumption')|float + states('sensor.bedroom_heater_consumption')|float + states('sensor.kitchen_heater_consumption')|float + states('sensor.living_room_heater_consumption')|float + states('sensor.loggia_heater_consumption')|float   }}"
+        state_class: total_increasing
+
+      - name: Total Water Consumption
+        unique_id: total_water_consumption
+        state: "{{ states('sensor.warm_water_consumption')|float + states('sensor.cold_water_consumption')|float + states('sensor.cold_water')|float  }}"
+        device_class: water
+        unit_of_measurement: m³
+        state_class: total
+        
+      - name: Count of Device Trackers
+        unique_id: count_device_trackers
+        state: "{{ states.device_tracker | count }}"
+        state_class: measurement
+        
+      - name: Count of Sensors
+        unique_id: count_sensors
+        state: "{{ states.sensor | count }}"
+        state_class: measurement
+        
+      - name: Count of Lights
+        unique_id: count_lights
+        state: "{{ states.light | count }}"
+        state_class: measurement
+
+      - name: Count of Sensors
+        unique_id: count_sensors
+        state: "{{ states.sensor | count }}"
+        state_class: measurement
+    
+      - name: Count of Switches
+        unique_id: count_switches
+        state: "{{ states.switch | count }}"
+        state_class: measurement
+        
+      - name: Count of Binary Sensors
+        unique_id: count_binary_sensor
+        state: "{{ states.binary_sensor | count }}"
+        state_class: measurement
+        
+      - name: Count of Automations
+        unique_id: count_automations
+        state: "{{ states.automation | count }}"
+        state_class: measurement
+        
+      - name: Count of Fritz Entities
+        unique_id: count_fritz_entities
+        state: "{{ integration_entities('FRITZ!Box 7590')|count }}"
+        state_class: measurement
+        
+      - name: Count of Fritz Devices
+        unique_id: count_fritz_devices
+        state: "{{ integration_entities('fritz')|count }}"
+        state_class: measurement

@@ -1,0 +1,419 @@
+views:
+  - title: Water
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: tile
+            entity: input_number.cold_water
+            vertical: false
+            features_position: bottom
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  name: '*Consumption'
+                  attributes:
+                    device_class: water
+                  options:
+                    type: gauge
+                    max: 1000
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+                - entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - change
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Consumption*'
+                  attributes:
+                    device_class: water
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - change
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Consumption*'
+                  attributes:
+                    device_class: water
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - change
+              days_to_show: 365
+              title: Weekly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Consumption*'
+                  attributes:
+                    device_class: water
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - change
+              title: Monthly
+              days_to_show: 730
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Consumption*'
+                  attributes:
+                    device_class: water
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+        column_span: 1
+    max_columns: 4
+  - title: Heating
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - options:
+                    type: gauge
+                    max: 3000
+                  domain: sensor
+                  name: '*Heater Consumption*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              stat_types:
+                - change
+              days_to_show: 1
+              title: Hourly
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Heater Consumption*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              stat_types:
+                - change
+              title: Daily
+              days_to_show: 30
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Heater Consumption*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              stat_types:
+                - change
+              days_to_show: 365
+              title: Weekly
+              max_y_axis: 350
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Heater Consumption*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - change
+              title: Monthly
+              days_to_show: 730
+              max_y_axis: 1200
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  name: '*Heater Consumption*'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+                - options: {}
+                  state: unavailable
+                - options: {}
+                  entity_category: diagnostic
+                - options: {}
+                  name: '*target*'
+        column_span: 1
+    max_columns: 4
+  - theme: Backend-selected
+    title: Electricity
+    badges: []
+    cards: []
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+          - type: tile
+            entity: input_number.strom
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 2
+              square: false
+            card_param: cards
+            filter:
+              include:
+                - domain: sensor
+                  entity_id: '*power'
+                  options:
+                    type: gauge
+                    max: 2500
+                    severity:
+                      green: 0
+                      yellow: 500
+                      red: 1000
+              exclude:
+                - hidden_by: '*'
+                - state: unavailable
+                - state: < 5
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+      - type: grid
+        cards:
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: 5minute
+              type: statistics-graph
+              hide_legend: false
+              stat_types:
+                - change
+              title: Minutely
+              days_to_show: 0.05
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  entity_id: '*_energy'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+            sort:
+              method: name
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: hour
+              type: statistics-graph
+              hide_legend: false
+              stat_types:
+                - change
+              title: Hourly
+              days_to_show: 1
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  label: allowlist
+                  entity_id: '*_energy'
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+            sort:
+              method: name
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: day
+              type: statistics-graph
+              hide_legend: false
+              stat_types:
+                - change
+              title: Daily
+              min_y_axis: 0
+            filter:
+              include:
+                - domain: sensor
+                  entity_id: '*_energy'
+                  label: allowlist
+              exclude:
+                - hidden_by: '*'
+            sort:
+              method: name
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: week
+              type: statistics-graph
+              hide_legend: false
+              stat_types:
+                - change
+              title: Weekly
+              days_to_show: 365
+              min_y_axis: 0
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  entity_id: '*_energy'
+                  label: allowlist
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+            sort:
+              method: name
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              hide_legend: false
+              stat_types:
+                - change
+              title: Monthly
+              days_to_show: 365
+              min_y_axis: 0
+            filter:
+              include:
+                - options: {}
+                  domain: sensor
+                  entity_id: '*_energy'
+                  label: allowlist
+                - options: {}
+                  entity_id: sensor.electricity
+              exclude:
+                - options: {}
+                  hidden_by: '*'
+            sort:
+              method: name
+        column_span: 1
