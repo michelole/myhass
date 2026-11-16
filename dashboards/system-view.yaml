@@ -50,9 +50,19 @@ views:
                     color: var(--warning-color)
                   - from: 90
                     color: var(--error-color)
-              - type: entity
+              - type: gauge
                 entity: sensor.memory_free
                 name: Memory Free
+                needle: true
+                min: 0
+                max: 2048
+                segments:
+                  - from: 0
+                    color: var(--error-color)
+                  - from: 256
+                    color: var(--warning-color)
+                  - from: 512
+                    color: var(--success-color)
       - type: grid
         cards:
           - type: statistics-graph
@@ -109,25 +119,73 @@ views:
     sections:
       - type: grid
         cards:
-          - type: entities
-            title: Spook Counts
-            entities:
-              - sensor.entities
-              - sensor.devices
-              - sensor.integrations
-              - sensor.sensors
-              - sensor.binary_sensors
-              - sensor.switches
-              - sensor.lights
-              - sensor.buttons
-              - sensor.automations
-              - sensor.device_trackers
-          - type: entities
-            title: Entity Health
-            entities:
-              - sensor.count_entities
-              - sensor.count_unknown_entities
-              - sensor.count_unavailable_entities
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: gauge
+                entity: sensor.entities
+                name: Entities
+                min: 0
+                max: 3000
+              - type: gauge
+                entity: sensor.devices
+                name: Devices
+                min: 0
+                max: 500
+              - type: gauge
+                entity: sensor.integrations
+                name: Integrations
+                min: 0
+                max: 200
+              - type: gauge
+                entity: sensor.sensors
+                name: Sensors
+                min: 0
+                max: 1500
+              - type: gauge
+                entity: sensor.binary_sensors
+                name: Binary Sensors
+                min: 0
+                max: 500
+              - type: gauge
+                entity: sensor.switches
+                name: Switches
+                min: 0
+                max: 500
+              - type: gauge
+                entity: sensor.lights
+                name: Lights
+                min: 0
+                max: 100
+              - type: gauge
+                entity: sensor.buttons
+                name: Buttons
+                min: 0
+                max: 300
+              - type: gauge
+                entity: sensor.automations
+                name: Automations
+                min: 0
+                max: 200
+              - type: gauge
+                entity: sensor.device_trackers
+                name: Device Trackers
+                min: 0
+                max: 100
+              - type: gauge
+                entity: sensor.count_unavailable_entities
+                name: Unavailable Entities
+                needle: true
+                min: 0
+                max: 500
+                segments:
+                  - from: 0
+                    color: var(--success-color)
+                  - from: 100
+                    color: var(--warning-color)
+                  - from: 250
+                    color: var(--error-color)
       - type: grid
         cards:
           - type: statistics-graph
@@ -138,8 +196,6 @@ views:
             stat_types:
               - mean
             entities:
-              - sensor.count_entities
-              - sensor.count_unknown_entities
               - sensor.count_unavailable_entities
           - type: statistics-graph
             title: Hourly
@@ -167,8 +223,6 @@ views:
             stat_types:
               - mean
             entities:
-              - sensor.count_entities
-              - sensor.count_unknown_entities
               - sensor.count_unavailable_entities
           - type: statistics-graph
             title: Weekly
@@ -195,9 +249,19 @@ views:
     sections:
       - type: grid
         cards:
-          - type: entity
+          - type: gauge
             entity: sensor.unavailable_zigbee_devices
             name: Unavailable Zigbee Devices
+            needle: true
+            min: 0
+            max: 30
+            segments:
+              - from: 0
+                color: var(--success-color)
+              - from: 5
+                color: var(--warning-color)
+              - from: 15
+                color: var(--error-color)
       - type: grid
         cards:
           - type: statistics-graph
@@ -254,10 +318,36 @@ views:
               data:
                 create_file: true
             name: Watchman report
-          - type: entities
-            entities:
-              - sensor.watchman_missing_entities
-              - sensor.watchman_missing_services
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: gauge
+                entity: sensor.watchman_missing_entities
+                name: Missing Entities
+                needle: true
+                min: 0
+                max: 50
+                segments:
+                  - from: 0
+                    color: var(--success-color)
+                  - from: 5
+                    color: var(--warning-color)
+                  - from: 20
+                    color: var(--error-color)
+              - type: gauge
+                entity: sensor.watchman_missing_services
+                name: Missing Services
+                needle: true
+                min: 0
+                max: 20
+                segments:
+                  - from: 0
+                    color: var(--success-color)
+                  - from: 1
+                    color: var(--warning-color)
+                  - from: 5
+                    color: var(--error-color)
       - type: grid
         cards:
           - type: statistics-graph
