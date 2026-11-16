@@ -75,9 +75,51 @@ views:
     sections:
       - type: grid
         cards:
-          - type: heading
-            heading: New section
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: gauge
+                entity: sensor.hp_deskjet_3630_series_black_ink
+                name: Black Ink
+                max: 100
+                segments:
+                  - from: 0
+                    color: var(--error-color)
+                  - from: 20
+                    color: var(--warning-color)
+                  - from: 55
+                    color: var(--success-color)
+              - type: gauge
+                entity: sensor.hp_deskjet_3630_series_tri_color_ink
+                name: Tri-Color Ink
+                max: 100
+                segments:
+                  - from: 0
+                    color: var(--error-color)
+                  - from: 20
+                    color: var(--warning-color)
+                  - from: 55
+                    color: var(--success-color)
       - type: grid
         cards:
-          - type: heading
-            heading: New section
+          - type: statistics-graph
+            chart_type: line
+            period: day
+            stat_types:
+              - mean
+            days_to_show: 30
+            title: Daily
+            entities:
+              - sensor.hp_deskjet_3630_series_black_ink
+              - sensor.hp_deskjet_3630_series_tri_color_ink
+          - type: statistics-graph
+            chart_type: line
+            period: week
+            stat_types:
+              - mean
+            days_to_show: 365
+            title: Weekly
+            entities:
+              - sensor.hp_deskjet_3630_series_black_ink
+              - sensor.hp_deskjet_3630_series_tri_color_ink
