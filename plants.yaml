@@ -1,64 +1,35 @@
-  aglaonema:
+  growcube_a:
     sensors:
-      moisture: sensor.plant_aglaonema_moisture
-      battery: sensor.plamt_aglaonema_battery
-      temperature: sensor.plant_aglaonema_temperature
-      conductivity: sensor.plant_aglaonema_conductivity
-      brightness: sensor.plant_aglaonema_light_intensity
+      moisture: sensor.growcube_c71437_moisture_a
+      temperature: sensor.growcube_c71437_temperature
     min_moisture: 15
     max_moisture: 60
-    min_conductivity: 350
-    max_conductivity: 2000
-    min_temperature: 12
-    max_temperature: 32
-    min_brightness: 2000
-    max_brightness: 25000
-
-  pachira:
-    sensors:
-      moisture: sensor.plant_pachira_moisture
-      battery: sensor.plant_pachira_battery
-      temperature: sensor.plant_pachira_temperature
-      conductivity: sensor.plant_pachira_conductivity
-      brightness: sensor.plant_pachira_light_intensity
-    min_moisture: 15
-    max_moisture: 60
-    min_conductivity: 350
-    max_conductivity: 2000
     min_temperature: 10
     max_temperature: 32
-    min_brightness: 1200
-    max_brightness: 40000
 
-  epipremnum:
+  growcube_b:
     sensors:
-      moisture: sensor.plant_epipremnum_moisture
-      battery: sensor.plant_epipremnum_battery
-      temperature: sensor.plant_epipremnum_temperature
-      conductivity: sensor.plant_epipremnum_conductivity
-      brightness: sensor.plant_epipremnum_light_intensity
+      moisture: sensor.growcube_c71437_moisture_b
+      temperature: sensor.growcube_c71437_temperature
     min_moisture: 15
     max_moisture: 60
-    min_conductivity: 350
-    max_conductivity: 2000
     min_temperature: 10
     max_temperature: 32
-    min_brightness: 500
-    max_brightness: 12000
 
-
-  monstera:
+  growcube_c:
     sensors:
-      moisture: sensor.plant_monstera_moisture
-      battery: sensor.plant_monstera_battery
-      temperature: sensor.plant_monstera_temperature
-      conductivity: sensor.plant_monstera_conductivity
-      brightness: sensor.plant_monstera_light_intensity
+      moisture: sensor.growcube_c71437_moisture_c
+      temperature: sensor.growcube_c71437_temperature
     min_moisture: 15
     max_moisture: 60
-    min_conductivity: 350
-    max_conductivity: 2000
     min_temperature: 10
     max_temperature: 32
-    min_brightness: 800
-    max_brightness: 15000
+
+  growcube_d:
+    sensors:
+      moisture: sensor.growcube_c71437_moisture_d
+      temperature: sensor.growcube_c71437_temperature
+    min_moisture: 15
+    max_moisture: 60
+    min_temperature: 10
+    max_temperature: 32
