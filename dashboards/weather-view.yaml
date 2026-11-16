@@ -38,6 +38,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   name: '*(Dew|Feels)*'
@@ -71,6 +73,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   name: '*(Dew|Feels)*'
@@ -97,6 +101,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
                 - options: {}
@@ -125,6 +131,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   name: '*(Dew|Feels)*'
@@ -152,6 +160,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   name: '*(Dew|Feels)*'
@@ -178,6 +188,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
                 - options: {}
@@ -225,6 +237,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   label: no-auto
@@ -258,6 +272,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   label: no-auto
@@ -284,6 +300,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
                 - options: {}
@@ -312,6 +330,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   label: no-auto
@@ -339,6 +359,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   label: no-auto
@@ -365,6 +387,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
                 - options: {}
@@ -409,6 +433,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
             sort:
               method: state
@@ -428,6 +454,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
             card:
@@ -457,6 +485,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -480,6 +510,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
@@ -505,6 +537,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -528,6 +562,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
         column_span: 1
@@ -569,6 +605,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
                 - options: {}
                   name: '*Heater*'
@@ -591,6 +629,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
             card:
@@ -621,6 +661,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -645,6 +687,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
@@ -671,6 +715,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -695,6 +741,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
         column_span: 1
@@ -734,6 +782,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
             sort:
               method: state
@@ -752,6 +802,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
             card:
@@ -780,6 +832,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -802,6 +856,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
@@ -826,6 +882,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -848,6 +906,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
         column_span: 1
@@ -888,6 +948,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
             sort:
               method: state
@@ -907,6 +969,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
             card:
@@ -936,6 +1000,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -959,6 +1025,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
@@ -984,6 +1052,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -1007,6 +1077,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
         column_span: 1
@@ -1048,6 +1120,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
             sort:
               method: state
@@ -1068,6 +1142,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
             card:
@@ -1098,6 +1174,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -1122,6 +1200,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
@@ -1148,6 +1228,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -1172,6 +1254,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
         column_span: 1
@@ -1212,6 +1296,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
             sort:
               method: state
@@ -1242,6 +1328,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -1265,6 +1353,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
@@ -1290,6 +1380,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -1314,6 +1406,8 @@ views:
                 - options: {}
                   state: unavailable
                 - options: {}
+                  state: unknown
+                - options: {}
                   entity_category: diagnostic
           - type: custom:auto-entities
             card:
@@ -1337,6 +1431,8 @@ views:
                   hidden_by: '*'
                 - options: {}
                   state: unavailable
+                - options: {}
+                  state: unknown
                 - options: {}
                   entity_category: diagnostic
         column_span: 1
