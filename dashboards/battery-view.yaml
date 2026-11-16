@@ -68,6 +68,22 @@ views:
               exclude:
                 - options: {}
                   state: '> 70'
+          - type: custom:auto-entities
+            card:
+              chart_type: line
+              period: month
+              type: statistics-graph
+              stat_types:
+                - mean
+              days_to_show: 365
+              title: Monthly
+            filter:
+              include:
+                - options: {}
+                  entity_id: '*battery_plus*'
+              exclude:
+                - options: {}
+                  state: '> 70'
   - type: sections
     max_columns: 4
     title: Ink
@@ -120,6 +136,16 @@ views:
               - mean
             days_to_show: 365
             title: Weekly
+            entities:
+              - sensor.hp_deskjet_3630_series_black_ink
+              - sensor.hp_deskjet_3630_series_tri_color_ink
+          - type: statistics-graph
+            chart_type: line
+            period: month
+            stat_types:
+              - mean
+            days_to_show: 365
+            title: Monthly
             entities:
               - sensor.hp_deskjet_3630_series_black_ink
               - sensor.hp_deskjet_3630_series_tri_color_ink
