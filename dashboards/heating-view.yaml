@@ -69,12 +69,12 @@ views:
                 }] %}
               {% endif %}
               
-              {% set trv_temp_list = states.sensor | selectattr('entity_id', 'search', room ~ '.*_trv_local_temperature_internal$') | map(attribute='entity_id') | list %}
-              {% set cal_list = states.number | selectattr('entity_id', 'search', room ~ '.*_trv_local_temperature_calibration$') | map(attribute='entity_id') | list %}
+              {% set trv_temp = 'sensor.' ~ room ~ '_trv_local_temperature_internal' %}
+              {% set cal = 'number.' ~ room ~ '_trv_local_temperature_calibration' %}
               
-              {% if trv_temp_list | length > 0 %}
+              {% if has_value(trv_temp) %}
                 {% set series = series + [{
-                  'entity': trv_temp_list[0],
+                  'entity': trv_temp,
                   'name': 'TRV Internal',
                   'yaxis_id': 'temp',
                   'type': 'line',
@@ -105,21 +105,21 @@ views:
                   'yaxis_id': 'temp',
                   'type': 'line',
                   'stroke_width': 1.5,
-                  'stroke_dash': 4,
+                  'stroke_dash': 1,
                   'color': '#e67e22',
                   'fill_raw': 'last'
                 }] %}
-              {% elif trv_temp_list | length > 0 and cal_list | length > 0 %}
+              {% elif has_value(trv_temp) and has_value(cal) %}
                 {% set series = series + [{
-                  'entity': trv_temp_list[0],
+                  'entity': trv_temp,
                   'name': 'TRV Calibrated',
                   'yaxis_id': 'temp',
                   'type': 'line',
                   'stroke_width': 1.5,
-                  'stroke_dash': 4,
+                  'stroke_dash': 1,
                   'color': '#e67e22',
                   'fill_raw': 'last',
-                  'transform': 'return Number(x) + Number(hass.states["' ~ cal_list[0] ~ '"].state);'
+                  'transform': 'return Number(x) + Number(hass.states["' ~ cal ~ '"].state);'
                 }] %}
               {% endif %}
               
@@ -154,10 +154,12 @@ views:
                 }] %}
               {% endif %}
               
-              {% set pres_list = states.binary_sensor | selectattr('entity_id', 'search', room ~ '.*_thermostat_presence_state$') | map(attribute='entity_id') | list %}
-              {% if pres_list | length > 0 and states(pres_list[0]) not in ['unknown', 'unavailable'] %}
+              {% set pres1 = 'binary_sensor.' ~ room ~ '_thermostat_presence_state' %}
+              {% set pres2 = 'binary_sensor.' ~ room ~ '_' ~ room ~ '_thermostat_presence_state' %}
+              {% set pres = pres1 if has_value(pres1) else (pres2 if has_value(pres2) else '') %}
+              {% if pres %}
                 {% set series = series + [{
-                  'entity': pres_list[0],
+                  'entity': pres,
                   'name': 'Away',
                   'yaxis_id': 'percent',
                   'type': 'area',
@@ -186,10 +188,12 @@ views:
                 }] %}
               {% endif %}
               
-              {% set mot_list = states.binary_sensor | selectattr('entity_id', 'search', room ~ '.*_thermostat_motion_state$') | map(attribute='entity_id') | list %}
-              {% if mot_list | length > 0 and states(mot_list[0]) not in ['unknown', 'unavailable'] %}
+              {% set mot1 = 'binary_sensor.' ~ room ~ '_' ~ room ~ '_thermostat_motion_state' %}
+              {% set mot2 = 'binary_sensor.' ~ room ~ '_thermostat_motion_state' %}
+              {% set mot = mot1 if has_value(mot1) else (mot2 if has_value(mot2) else '') %}
+              {% if mot %}
                 {% set series = series + [{
-                  'entity': mot_list[0],
+                  'entity': mot,
                   'name': 'Motion',
                   'yaxis_id': 'percent',
                   'type': 'area',
@@ -223,9 +227,14 @@ views:
                 'header': {'show': true, 'title': title},
                 'graph_span': '12h',
                 'yaxis': [
-                  {'id': 'temp', 'opposite': false, 'min': 14, 'max': 24, 'decimals': 1},
+                  {'id': 'temp', 'opposite': false, 'min': 16, 'max': 22, 'decimals': 1, 'apex_config': {'tickAmount': 6}},
                   {'id': 'percent', 'opposite': true, 'min': 0, 'max': 100, 'decimals': 0}
                 ],
+                'apex_config': {
+                  'grid': {
+                    'yaxis': {'lines': {'show': true}}
+                  }
+                },
                 'series': series
               }] %}
             {% endfor %} {{ ns.cards }}
