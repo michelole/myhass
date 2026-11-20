@@ -51,18 +51,18 @@ views:
                   - from: 90
                     color: var(--error-color)
               - type: gauge
-                entity: sensor.memory_free
-                name: Memory Free
+                entity: sensor.system_monitor_memory_use
+                name: Memory Use
                 needle: true
                 min: 0
-                max: 2048
+                max: 100
                 segments:
                   - from: 0
-                    color: var(--error-color)
-                  - from: 256
-                    color: var(--warning-color)
-                  - from: 512
                     color: var(--success-color)
+                  - from: 70
+                    color: var(--warning-color)
+                  - from: 90
+                    color: var(--error-color)
       - type: grid
         cards:
           - type: statistics-graph
@@ -87,7 +87,7 @@ views:
               - sensor.processor_use
               - sensor.processor_temperature
               - sensor.disk_use_percent_config
-              - sensor.memory_free
+              - sensor.system_monitor_memory_use
           - type: statistics-graph
             title: Daily
             chart_type: line
@@ -99,7 +99,7 @@ views:
               - sensor.processor_use
               - sensor.processor_temperature
               - sensor.disk_use_percent_config
-              - sensor.memory_free
+              - sensor.system_monitor_memory_use
           - type: statistics-graph
             title: Weekly
             chart_type: line
@@ -111,7 +111,7 @@ views:
               - sensor.processor_use
               - sensor.processor_temperature
               - sensor.disk_use_percent_config
-              - sensor.memory_free
+              - sensor.system_monitor_memory_use
 
   - title: Entities
     path: entities
@@ -336,8 +336,8 @@ views:
                   - from: 20
                     color: var(--error-color)
               - type: gauge
-                entity: sensor.watchman_missing_services
-                name: Missing Services
+                entity: sensor.watchman_missing_actions
+                name: Missing Actions
                 needle: true
                 min: 0
                 max: 20
@@ -359,7 +359,7 @@ views:
               - mean
             entities:
               - sensor.watchman_missing_entities
-              - sensor.watchman_missing_services
+              - sensor.watchman_missing_actions
           - type: statistics-graph
             title: Hourly
             chart_type: line
@@ -369,7 +369,7 @@ views:
               - mean
             entities:
               - sensor.watchman_missing_entities
-              - sensor.watchman_missing_services
+              - sensor.watchman_missing_actions
           - type: statistics-graph
             title: Daily
             chart_type: line
@@ -379,7 +379,7 @@ views:
               - mean
             entities:
               - sensor.watchman_missing_entities
-              - sensor.watchman_missing_services
+              - sensor.watchman_missing_actions
           - type: statistics-graph
             title: Weekly
             chart_type: line
@@ -389,4 +389,4 @@ views:
               - mean
             entities:
               - sensor.watchman_missing_entities
-              - sensor.watchman_missing_services
+              - sensor.watchman_missing_actions
